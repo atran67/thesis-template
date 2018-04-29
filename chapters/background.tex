@@ -1,10 +1,13 @@
-How are languages converted to machine code?
+\section{Control Flow Graphs}
+When compilers convert a source language to the underlying machine code, they first organize the program's statements into a form that is useful for subsequent operations. The compiler constructs a Control Flow Graph for each function that separates groups of statements based on the language's available control flow constructs, such as conditional statements or loops. Statements are grouped into basic blocks, and are connected to one another based on their corresponding control flow statements; larger blocks are encouraged to provide more opportunities for program optimizations. After each graph is generated, the compiler converts the statements from each block into the appropriate machine code and outputs each converted block. Control Flow Graphs can also keep track of other information that is useful for later optimizations, such as each basic block's predecessors.
 
-Compilers
+\section{Intermediate Representations}
+Some compilers use an Intermediate Representation (IR) for the source language before converting the input program to the appropriate machine code. The IR provides additional information, such as data types, at a lower abstraction level than the input language, and can be processed more easily than the final machine code. Optimizations are often performed after the program is converted to an IR due to having more opportunities to optimize at this level without having to address platform-specific details.
 
-CFG
+\subsection{LLVM}
+The Low Level Virtual Machine (LLVM) IR is commonly used for compiler construction. This IR features instructions similar to those of assembly languages, but also includes features available in higher-level languages. Additional abstractions provided by LLVM include virtual registers, register and variable types, and function headers and calls, removing the overhead needed to maintain calling conventions. Each virtual register in the LLVM IR is unique and can only declared once, a convention known as Single Static Assignment (SSA). LLVM's virtual registers are later mapped to real registers when the program is converted to binary code.
 
-Optimization
+\section{Optimizations}
 
 Pointer Analysis
 
