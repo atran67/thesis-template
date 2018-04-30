@@ -20,5 +20,6 @@ Certain constants may be known at compilation time within a program. A compiler 
 Instructions that do not affect other instructions or have no effect on the program can be removed. Instructions that produce the same result within loops or conditional statements may be relocated to surrounding basic blocks to reduce the amount of redundant calculation. Certain instructions, such as load and store instructions, may be relocated to improve performance based on hardware-based considerations, such as pipelining. When relocating instructions, additional analysis is required to ensure that these instructions do not have additional dependencies from nearby instructions, either in the form of operands in later instructions or by updating required variables or values. One such analysis that determines whether certain values are related is Alias Analysis.
 
 \section{Alias Analysis}
+Two pointers are said to alias if they refer to the same area of program memory. An alias analysis attempts to determine which pointers in a program alias with each other. Because alias analysis is an NP-Hard problem, conventional alias analysis techniques perform some kind of approximation when producing sets of possible aliases. Because the analysis is imperfect, compilers must make conservative assumptions when performing optimizations based on the results of an alias analysis.
 
-Types of pointer analyses
+\subsection{Andersen Analysis}
