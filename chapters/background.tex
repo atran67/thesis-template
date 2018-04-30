@@ -14,10 +14,10 @@ After creating the CFG for the input program and producing the corresponding IR,
 Because loading and storing variables from memory can incur time overhead, some compilers minimize the use of memory by storing variables exclusively within registers. This is effective with an IR that enforces SSA because whenever a value is updated, including ones from variables, that value must be assigned to a new virtual register. Optimization using SSA requires recursively searching through a basic block's predecessors to find the last register that contained a desired value. Additionally, the value of a variable may exist in different registers depending on the path of a program, so additional overhead is required to unify different versions of a variable from its predecessors at the beginning of a basic block. Despite the increase in instructions, the reduced time from accessing registers instead of accessing main memory provides significant improvements in speed and memory usage at the cost of larger executable sizes.
 
 \subsection{Constant Propagation}
-Certain constants may be known at compilation time within a program. A compiler can replace operands within statements and expressions with known constants, potentially collapsing multiple expressions into single values.
+Certain constants may be known at compilation time within a program. A compiler can replace operands within statements and expressions with known constants, potentially collapsing multiple expressions into single values. Conditions that are replaced with constants may change the structure of the CFG by removing basic blocks that are never traversed.
 
 \subsection{Code Removal and Relocation}
-
+Instructions that do not affect other instructions or have no effect on the program can be removed. Instructions that produce the same result within loops or conditional statements may be relocated to surrounding basic blocks to reduce the amount of redundant calculations.
 
 Pointer Analysis
 
