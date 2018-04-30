@@ -11,10 +11,13 @@ The Low Level Virtual Machine (LLVM) IR is commonly used for compiler constructi
 After creating the CFG for the input program and producing the corresponding IR, a compiler may take one or more optimization passes on the graph. These optimizations are meant to improve program performance without affecting the semantic meaning of the program, and focus on reducing unnecessary code, execution time, and memory usage.
 
 \subsection{SSA Optimization}
-Because loading and storing variables from memory can incur time overhead, some compilers minimize the use of memory by storing variables exclusively within registers. This is effective with an IR that enforces SSA because whenever a value is updated, including ones from variables, that value must be assigned to a new virtual register. Optimization using SSA requires recursively searching through a basic block's predecessors to find the last register that contained a desired value. Additionally, the value of a variable may exist in different registers depending on the path of a program, so additional overhead is required to unify different versions of a variable from its predecessors at the beginning of a basic block.
+Because loading and storing variables from memory can incur time overhead, some compilers minimize the use of memory by storing variables exclusively within registers. This is effective with an IR that enforces SSA because whenever a value is updated, including ones from variables, that value must be assigned to a new virtual register. Optimization using SSA requires recursively searching through a basic block's predecessors to find the last register that contained a desired value. Additionally, the value of a variable may exist in different registers depending on the path of a program, so additional overhead is required to unify different versions of a variable from its predecessors at the beginning of a basic block. Despite the increase in instructions, the reduced time from accessing registers instead of accessing main memory provides significant improvements in speed and memory usage at the cost of larger executable sizes.
 
 \subsection{Constant Propagation}
-Certain constants may be known at compilation time within a program. 
+Certain constants may be known at compilation time within a program. A compiler can replace operands within statements and expressions with known constants, potentially collapsing multiple expressions into single values.
+
+\subsection{Code Removal and Relocation}
+
 
 Pointer Analysis
 
