@@ -17,7 +17,7 @@ Because loading and storing variables from memory can incur time overhead, some 
 Certain constants may be known at compilation time within a program. A compiler can replace operands within statements and expressions with known constants, potentially collapsing multiple expressions into single values. Conditions that are replaced with constants may change the structure of the CFG by removing basic blocks that are never traversed.
 
 \subsection{Code Removal and Relocation}
-Instructions that do not affect other instructions or have no effect on the program can be removed. Instructions that produce the same result within loops or conditional statements may be relocated to surrounding basic blocks to reduce the amount of redundant calculations.
+Instructions that do not affect other instructions or have no effect on the program can be removed. Instructions that produce the same result within loops or conditional statements may be relocated to surrounding basic blocks to reduce the amount of redundant calculation. Certain instructions, such as load and store instructions, may be relocated to improve performance based on hardware-based considerations, such as pipelining. When relocating instructions, additional analysis is required to ensure that these instructions do not have additional dependencies from nearby instructions, either in the form of operands in later instructions or by updating required variables or values. One such analysis that determines whether certain values are related is Alias Analysis.
 
 Pointer Analysis
 
