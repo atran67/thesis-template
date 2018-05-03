@@ -1,0 +1,2 @@
+\section{LLVM Instrumentation}
+To measure the effectiveness of various alias analyses, we instrument a series of C programs to obtain data about which memory addresses are accessed. We perform this instrumentation on LLVM source files translated from the original C sources to have a higher granularity of instrumentation; individual expressions or statements may contain multiple memory accesses that are not easily captured at the level of the target language.
