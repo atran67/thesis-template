@@ -1,4 +1,4 @@
-\chapter{Background>
+\chapter{Background}
 
 \section{Control Flow Graphs}
 When compilers convert a source language to the underlying machine code, they first organize the program's statements into a form that is useful for subsequent operations. The compiler constructs a Control Flow Graph (CFG) for each function that separates groups of statements based on the language's available control flow constructs, such as conditional statements or loops. Statements are grouped into basic blocks, and are connected to one another based on their corresponding control flow statements; larger blocks are encouraged to provide more opportunities for program optimizations. After each graph is generated, the compiler converts the statements from each block into the appropriate machine code and outputs each converted block. Control Flow Graphs can also keep track of other information that is useful for later optimizations, such as each basic block's predecessors.

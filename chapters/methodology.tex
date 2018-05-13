@@ -1,3 +1,5 @@
+\chapter{Methodology}
+
 To gather data for alias analyses, we instrument a series of benchmark C programs. These programs vary in size and complexity, and are designed to represent various realistic workloads. The C source files are converted to the LLVM IR and compiled using clang, without optimizations. Because the instrumentation requires additional I/O and time overhead, the benchmarks are run either until completion or after 10 minutes have passed. The data from the benchmarks is used with the results from several implemented alias analyses to measure the effectiveness of those techniques.
 
 \section{SPEC2000 Benchmarks}
