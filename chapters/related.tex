@@ -11,6 +11,9 @@ Andersen Alias Analysis is a analysis technique for determining pointer aliases 
 \subsection{Steensgaard Analysis}
 Steensgaard Alias Analysis is another alias analysis technique that works across function calls without considering program flow \cite{Steensgaard}. Steensgaard analysis is based off an abstract pointer-based language that includes pointer operations, n-ary operators, dynamic memory, and functions. Type inference rules are used to generate alias sets for the pointer variables in the program. Each statement is initially processed once to generate the initial set of pointers; these values are stored in a union-find data structure, and are combined in alias sets in subsequent join operations. The resulting algorithm was found to be linear in space complexity and almost linear in terms of time complexity.
 
+\subsection{LLVM Basic Alias Analysis}
+The LLVM infrastructure features a basic alias analysis implementation available for use with compiler implementations \cite{llvmaa}. This alias analysis is local per function and depends on a series of heuristics to determine which pointers alias. For this analysis, distinct variables and allocated memory can never alias, and never alias the null pointer \cite{llvmaa}. Similarly, differing structure fields and array references that are statically different do not alias. Some C standard library functions are assumed to either never access program memory, or only access read-only memory. Pointers that refer to constant global values, such as strings, are said to pointer to constant memory. Finally, function calls cannot access local variables that never escape from the function that allocate them.
+
 1997 Report Hind
 
 \section{Evaluating Alias Analyses}
