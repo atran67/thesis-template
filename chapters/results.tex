@@ -79,3 +79,20 @@ Table \ref{table:4} shows the mean and standard deviations of the alias lifetime
    \caption{Mean and Standard Deviation of Benchmark Lifetimes}
    \label{table:4}
 \end{table}
+
+Table \ref{table:5} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
+
+\begin{table}
+\centering
+   \begin{tabular} {|c|c c c c c c c c c c c c c c c|}
+      \hline
+      & matmul & dict & libc_malloc & libc_malloc2 & tree & cycles
+      \hline
+      Mean
+      \hline
+      Std. Dev.
+      \hline
+   \end{tabular}
+   \caption{Mean and Standard Deviation of Benchmark Allocation Sizes}
+   \label{table:5}
+\end{table}
