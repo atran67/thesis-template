@@ -63,7 +63,28 @@ Table \ref{table:3} shows the alias miss rate for each benchmark, separated by t
    \label{table:3}
 \end{table}
 
-Table \ref{table:4} shows the mean and standard deviations of the alias lifetimes for each benchmark, and are independent of any alias analyses.
+Table \ref{table:4} shows the alias identification rate for each benchmark, separated by the type of alias analysis used.
+
+\begin{table}
+\centering
+   \begin{tabular} {|c|c c c c c c c c c c c c c c c|}
+      \hline
+      & bzip2 & gzip & mcf & twolf & parser & vpr & crafty & sudoku & matmul & dict & libc_malloc & libc_malloc2 & tcmalloc & tree & cycles \\
+      \hline
+      Anders
+      \hline
+      Steens
+      \hline
+      ARC
+      \hline
+      Basic
+      \hline
+   \end{tabular}
+   \caption{Alias Identification Rate per Benchmark}
+   \label{table:4}
+\end{table}
+
+Table \ref{table:5} shows the mean and standard deviations of the alias lifetimes for each benchmark, and are independent of any alias analyses.
 
 \begin{table}
 \centering
@@ -77,10 +98,10 @@ Table \ref{table:4} shows the mean and standard deviations of the alias lifetime
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Lifetimes}
-   \label{table:4}
+   \label{table:5}
 \end{table}
 
-Table \ref{table:5} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
+Table \ref{table:6} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
 
 \begin{table}
 \centering
@@ -94,10 +115,10 @@ Table \ref{table:5} shows the mean and standard deviations of the allocation siz
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Allocation Sizes}
-   \label{table:5}
+   \label{table:6}
 \end{table}
 
-Table \ref{table:5} shows the mean and standard deviations of the allocation lifetimes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
+Table \ref{table:7} shows the mean and standard deviations of the allocation lifetimes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
 
 \begin{table}
 \centering
@@ -111,5 +132,5 @@ Table \ref{table:5} shows the mean and standard deviations of the allocation lif
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Allocation Lifetimes}
-   \label{table:6}
+   \label{table:7}
 \end{table}
