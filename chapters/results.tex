@@ -1,6 +1,27 @@
 \chapter{Results}
 
-Table \ref{table:1} shows the number of alias misses for each benchmark, divided by the type of alias analysis used.
+Table \ref{table:1} shows the number of aliases identified for each benchmark, separated by the type of alias analysis used.
+
+\begin{table}
+\centering
+   \begin{tabular} {|c|c c c c c c c c c c c c c|}
+      \hline
+      & bzip2 & gzip & mcf & twolf & parser & vpr & crafty & sudoku & matmul & dict & libc_malloc & libc_malloc2 & tcmalloc & tree & cycles
+      \hline
+      Anders
+      \hline
+      Steens
+      \hline
+      ARC
+      \hline
+      Basic
+      \hline
+   \end{tabular}
+   \caption{Aliases Identified per Benchmark}
+   \label{table:1}
+\end{table}
+
+Table \ref{table:2} shows the number of alias misses for each benchmark, separated by the type of alias analysis used.
 
 \begin{table}
 \centering
@@ -18,5 +39,28 @@ Table \ref{table:1} shows the number of alias misses for each benchmark, divided
       \hline
    \end{tabular}
    \caption{Alias Misses per Benchmark}
-   \label{table:1}
+   \label{table:2}
 \end{table}
+
+Table \ref{table:3} shows the alias miss rate for each benchmark, separated by the type of alias analysis used.
+
+\begin{table}
+\centering
+   \begin{tabular} {|c|c c c c c c c c c c c c c|}
+      \hline
+      & bzip2 & gzip & mcf & twolf & parser & vpr & crafty & sudoku & matmul & dict & libc_malloc & libc_malloc2 & tcmalloc & tree & cycles
+      \hline
+      Anders
+      \hline
+      Steens
+      \hline
+      ARC
+      \hline
+      Basic
+      \hline
+   \end{tabular}
+   \caption{Alias Miss Rate per Benchmark}
+   \label{table:3}
+\end{table}
+
+
