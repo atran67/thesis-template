@@ -1,1 +1,22 @@
 \chapter{Results}
+
+Table \ref{table:1} shows the number of alias misses for each benchmark, divided by the type of alias analysis used.
+
+\begin{table}
+\centering
+   \begin{tabular} {|c|c c c c c c c c c c c c c|}
+      \hline
+      & bzip2 & gzip & mcf & twolf & parser & vpr & crafty & sudoku & matmul & dict & libc_malloc & libc_malloc2 & tcmalloc & tree & cycles
+      \hline
+      Anders
+      \hline
+      Steens
+      \hline
+      ARC
+      \hline
+      Basic
+      \hline
+   \end{tabular}
+   \caption{Alias Misses per Benchmark}
+   \label{table:1}
+\end{table}
