@@ -184,18 +184,46 @@ Table \ref{table:5} shows the mean and standard deviations of the alias lifetime
 
 \begin{table} [h!]
 \centering
-   \begin{tabular} {|c|c c c c c c c c c c c c c c c|}
+   \begin{tabular} {|c|c c|}
       \hline
-      & bzip2 & gzip & mcf & twolf & parser & vpr & crafty & sudoku & matmul & dict & libc\_malloc & libc\_malloc2 & tcmalloc & tree & cycles \\
+      & Mean & Std. Deviation \\
       \hline
-      Mean & 286487.505 & 252200.178 & 175741.741 & 68782.141 & 3054.5 & 4762.618 & 276957.791 & 184128.259 & 176101.094 & 61732.615 & 31110.768.089 & 279071.698 & 30.768.255 & 25.717 & 1363.871 \\
+	   bzip2 & 286487.505 & 843167.976 \\
       \hline
-      Std. Dev. & 843167.976 & 758121.815 & 1002112.782 & 149007.719 & 12379.139 & 24508.441 & 835831.453 & 443716.239 & 748244.153 & 172287.097 & 1330367.143 & 1263542.275 & 1407127.345 & 156.047 & 3351.797 \\
+	   gzip & 252200.178 & 758121.815 \\
+      \hline
+           mcf & 175741.741 & 1002112.782 \\
+      \hline
+	   twolf & 68782.141 & 149007.719 \\
+      \hline
+	   parser & 3054.5 & 12379.139 \\
+      \hline
+	   vpr & 4762.618 & 24508.441 \\
+      \hline
+	   crafty & 276957.791 & 835831.453 \\
+      \hline
+	   sudoku & 184128.259 & 443716.239 \\
+      \hline
+	   matmul & 176101.094 & 748244.153 \\
+      \hline
+	   dict & 61732.615 & 172287.097 \\
+      \hline
+	   libc\_malloc & 31110.768.089 & 1330367.143 \\
+      \hline
+	   libc\_malloc2 & 279071.698 & 1263542.275 \\
+      \hline
+	   tcmalloc & 30.768.255 & 1407127.345 \\
+      \hline
+	   tree & 25.717 & 156.047 \\
+      \hline
+	   cycles & 1363.871 & 3351.797 \\
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Lifetimes}
    \label{table:5}
 \end{table}
+
+\newpage
 
 Table \ref{table:6} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
 
