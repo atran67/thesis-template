@@ -94,17 +94,39 @@ Table \ref{table:3} shows the alias miss rate for each benchmark, separated by t
 
 \begin{table} [h!]
 \centering
-   \begin{tabular} {|c|c c c c c c c c c c c c c c c|}
+   \begin{tabular} {|c|c c c c|}
       \hline
-      & bzip2 & gzip & mcf & twolf & parser & vpr & crafty & sudoku & matmul & dict & libc\_malloc & libc\_malloc2 & tcmalloc & tree & cycles \\
+      & Anders & Steens & ARC & Basic \\
       \hline
-      Anders & 0.125 & 0.035 & 0.152 & 0.010 & 0.007 & 0.059 & 0.008 & 0.481 & 0.317 & 0.768 & 0.053 & 0.053 & 0 & 0.532 & 0.037 \\
+	   bzip2 & 0.125 & 0.125 & 0.127 & 0.127 \\
       \hline
-      Steens & 0.125 & 0.035 & 0.154 & 0.010 & 0.007 & 0.059 & 0.008 & 0.481 & 0.317 & 0.768 & 0.053 & 0.053 & 0 & 0.532 & 0.037 \\
+	   gzip & 0.035 & 0.035 & 0.035 & 0.035 \\
       \hline
-      ARC & 0.127 & 0.035 & 0.154 & 0.010 & 0.007 & 0.059 & 0.009 & 0.481 & 0.317 & 0.768 & 0.053 & 0.053 & 0 & 0.532 & 0.037 \\
+           mcf & 0.152 & 0.154 & 0.154 & 0.154 \\
       \hline
-      Basic & 0.127 & 0.035 & 0.154 & 0.010 & 0.007 & 0.059 & 0.009 & 0.481 & 0.317 & 0.768 & 0.053 & 0.053 & 0 & 0.532 & 0.037 \\
+	   twolf & 0.010 & 0,010 & 0,010 & 0,010 \\
+      \hline
+	   parser & 0.007 & 0.007 & 0.007 & 0.007 \\
+      \hline
+	   vpr & 0.059 & 0.059 & 0.059 & 0.059 \\
+      \hline
+	   crafty & 0.008 & 0.008 & 0.009 & 0.009 \\
+      \hline
+	   sudoku & 0.481 & 0.481 & 0.481 & 0.481 \\
+      \hline
+	   matmul & 0.317 & 0.317 & 0.317 & 0.317 \\
+      \hline
+	   dict & 0.768 & 0.768 & 0.768 & 0.768 \\
+      \hline
+	   libc\_malloc & 0.053 & 0.053 & 0.053 & 0.053 \\
+      \hline
+	   libc\_malloc2 & 0.053 & 0.053 & 0.053 & 0.053 \\
+      \hline
+	   tcmalloc & 0 & 0 & 0 & 0 \\
+      \hline
+	   tree & 0.532 & 0.532 & 0.532 & 0.532 \\
+      \hline
+	   cycles & 0.037 & 0.037 & 0.037 & 0.037 \\
       \hline
    \end{tabular}
    \caption{Alias Miss Rate per Benchmark}
@@ -140,7 +162,7 @@ Table \ref{table:5} shows the mean and standard deviations of the alias lifetime
       \hline
       & bzip2 & gzip & mcf & twolf & parser & vpr & crafty & sudoku & matmul & dict & libc\_malloc & libc\_malloc2 & tcmalloc & tree & cycles \\
       \hline
-      Mean & 286487.505 & 252200.178 & 175741.741 & 68782.141 & 3054.5 & 4762.618 & 276957.791 & 184128.259 & 176101.094 & 61732.615 & 311113.089 & 279071.698 & 313728.255 & 25.717 & 1363.871 \\
+      Mean & 286487.505 & 252200.178 & 175741.741 & 68782.141 & 3054.5 & 4762.618 & 276957.791 & 184128.259 & 176101.094 & 61732.615 & 31110.768.089 & 279071.698 & 30.768.255 & 25.717 & 1363.871 \\
       \hline
       Std. Dev. & 843167.976 & 758121.815 & 1002112.782 & 149007.719 & 12379.139 & 24508.441 & 835831.453 & 443716.239 & 748244.153 & 172287.097 & 1330367.143 & 1263542.275 & 1407127.345 & 156.047 & 3351.797 \\
       \hline
