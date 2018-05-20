@@ -5,5 +5,18 @@ While this thesis is an exploratory study into the effectiveness of alias analys
 \section{Additional Alias Analyses}
 Additional studies could be conducted to measure the effectiveness of other alias analyses. The LLVM Optimizer features several other built-in alias analyses that were not included in this thesis that could be examined. Given more time, more recently proposed alias analyses could be implemented to work at the LLVM level for similar measurement.
 
+\section{Additional Benchmarks}
+The benchmark programs used in this thesis were selected to represent a diverse range of realistic program workloads. Because of this, the list of chosen benchmarks is inherently non-exhaustive, and cannot reflect all types of memory access patterns we are interested in. We suggest the following guidelines for selecting benchmarks for future studies.
+
+\subsection{Program Sizes}
+
+\subsection{Memory Allocation}
+
 \section{Improved Instrumentation}
-The instrumentation for this thesis consists of printing out data for memory access instructions. Because of the I/O overhead associated with printing out information, this is not the most efficient method of instrumentation; when considering the large number of memory access instructions within the unoptimized benchmark programs, the instrumented programs are several orders of magnitude slower than their uninstrumented counterparts. More time could be dedicated to developing or modifying a framework for logging a program's memory accesses at the LLVM level, similar to how debuggers handle programs in isolated environments.
+The instrumentation for this thesis consists of printing out data for memory access instructions. Because of the I/O overhead associated with printing out information, this is not the most efficient method of instrumentation; when considering the large number of memory access instructions within the unoptimized benchmark programs, the instrumented programs are several orders of magnitude slower than their uninstrumented counterparts. More time could be dedicated to developing or modifying a framework for logging a program's memory accesses at the LLVM level, similar to how debuggers handle programs in isolated environments. A dedicated framework might also be better at gathering data at a finer level, improving the effectiveness of the gathered program statistics.
+
+\section{Statistics Gathered}
+
+\subsection{Timing}
+
+\subsection{Local Statistics}
