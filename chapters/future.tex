@@ -18,7 +18,10 @@ Only six benchmarks used in this thesis dynamically allocated memory and were in
 The instrumentation for this thesis consists of printing out data for memory access instructions. Because of the I/O overhead associated with printing out information, this is not the most efficient method of instrumentation; when considering the large number of memory access instructions within the unoptimized benchmark programs, the instrumented programs are several orders of magnitude slower than their uninstrumented counterparts. More time could be dedicated to developing or modifying a framework for logging a program's memory accesses at the LLVM level, similar to how debuggers handle programs in isolated environments. A dedicated framework might also be better at gathering data at a finer level, improving the effectiveness of the gathered program statistics.
 
 \section{Statistics Gathered}
+Refining the existing program statistics, along with additional statistics, could help provide further insight into the behavior of instrumented programs.
 
 \subsection{Timing}
+Due to limitations on the platform used to test the alias analyses, along with the lower-level nature of the LLVM code, finer-grained timers were unavailable for program instrumentation. One possible improvement for measuring allocation lifetimes in subsequent studies is to use CPU-based timers that measure the number of clocks in a program, but this is dependent on the available libraries on the testing platform.
 
 \subsection{Local Statistics}
+The program statistics presented by this thesis are global statistics. However, many programs will have different memory access patterns depending on which functions are running. Generating program statistics per function may help clarify such differences in memory accesses.
