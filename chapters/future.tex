@@ -9,8 +9,10 @@ Additional studies could be conducted to measure the effectiveness of other alia
 The benchmark programs used in this thesis were selected to represent a diverse range of realistic program workloads. Because of this, the list of chosen benchmarks is inherently non-exhaustive, and cannot reflect all types of memory access patterns we are interested in. We suggest the following guidelines for selecting benchmarks for future studies.
 
 \subsection{Program Sizes}
+While benchmarks of varying sizes were selected, organizing these program sizes into categories might be useful for observing trends in some of the measured program statistics. These sizes would be best defined by lines of code, or by numbers of functions, based on the assumption that larger programs have similar proportions of memory access instructions to those of smaller programs.
 
 \subsection{Memory Allocation}
+Only six benchmarks used in this thesis dynamically allocated memory and were instrumented for this allocation, and some of these benchmarks allocated memory in contrived ways to test the memory allocation functions themselves; this is not representative of most programs that allocate memory, and could be improved in future studies by examining programs that use allocated memory in more realistic ways.
 
 \section{Improved Instrumentation}
 The instrumentation for this thesis consists of printing out data for memory access instructions. Because of the I/O overhead associated with printing out information, this is not the most efficient method of instrumentation; when considering the large number of memory access instructions within the unoptimized benchmark programs, the instrumented programs are several orders of magnitude slower than their uninstrumented counterparts. More time could be dedicated to developing or modifying a framework for logging a program's memory accesses at the LLVM level, similar to how debuggers handle programs in isolated environments. A dedicated framework might also be better at gathering data at a finer level, improving the effectiveness of the gathered program statistics.
