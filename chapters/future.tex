@@ -6,3 +6,4 @@ While this thesis is an exploratory study into the effectiveness of alias analys
 Additional studies could be conducted to measure the effectiveness of other alias analyses. The LLVM Optimizer features several other built-in alias analyses that were not included in this thesis that could be examined. Given more time, more recently proposed alias analyses could be implemented to work at the LLVM level for similar measurement.
 
 \section{Improved Instrumentation}
+The instrumentation for this thesis consists of printing out data for memory access instructions. Because of the I/O overhead associated with printing out information, this is not the most efficient method of instrumentation; when considering the large number of memory access instructions within the unoptimized benchmark programs, the instrumented programs are several orders of magnitude slower than their uninstrumented counterparts.
