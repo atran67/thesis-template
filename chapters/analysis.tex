@@ -1,5 +1,266 @@
 \chapter{Analysis}
 
+\section{Results}
+Table \ref{table:1} shows the number of aliases identified for each benchmark, separated by the type of alias analysis used.
+
+\begin{table} [h!]
+\centering
+   \begin{tabular} {|c|c c c c|}
+      \hline
+      & Anders & Steens & ARC & Basic \\
+      \hline
+	   bzip2 & 624 & 624 & 624 & 624 \\
+      \hline
+	   gzip & 1170 & 1170 & 1170 & 1170 \\
+      \hline
+           mcf & 676 & 676 & 676 & 676 \\
+      \hline
+	   twolf & 9081 & 9081 & 9081 & 9081 \\
+      \hline
+	   parser & 3221 & 3221 & 3221 & 3221 \\
+      \hline
+	   vpr & 3701 & 3701 & 3701 & 3701 \\
+      \hline
+	   crafty & 4587 & 4587 & 4587 & 4587 \\
+      \hline
+	   sudoku & 77 & 77 & 77 & 77 \\
+      \hline
+	   matmul & 41 & 41 & 41 & 41 \\
+      \hline
+	   dict & 138 & 138 & 138 & 138 \\
+      \hline
+	   libc\_malloc & 171 & 171 & 171 & 171 \\
+      \hline
+	   libc\_malloc2 & 171 & 171 & 171 & 171 \\
+      \hline
+	   tcmalloc & 171 & 171 & 171 & 171 \\
+      \hline
+	   tree & 79 & 79 & 79 & 79 \\
+      \hline
+	   cycles & 27 & 27 & 27 & 27 \\
+      \hline
+   \end{tabular}
+   \caption{Aliases Identified per Benchmark}
+   \label{table:1}
+\end{table}
+
+\newpage
+
+Table \ref{table:2} shows the number of alias misses for each benchmark, separated by the type of alias analysis used.
+
+\begin{table} [h!]
+\centering
+   \begin{tabular} {|c|c c c c|}
+      \hline
+      & Anders & Steens & ARC & Basic \\
+      \hline
+	   bzip2 & 78 & 78 & 79 & 79 \\
+      \hline
+	   gzip & 41 & 41 & 41 & 41 \\
+      \hline
+           mcf & 103 & 104 & 104 & 104 \\
+      \hline
+	   twolf & 92 & 92 & 92 & 92 \\
+      \hline
+	   parser & 23 & 23 & 23 & 23 \\
+      \hline
+	   vpr & 218 & 218 & 218 & 218 \\
+      \hline
+	   crafty & 38 & 38 & 39 & 39 \\
+      \hline
+	   sudoku & 37 & 37 & 37 & 37 \\
+      \hline
+	   matmul & 13 & 13 & 13 & 13 \\
+      \hline
+	   dict & 106 & 106 & 106 & 106 \\
+      \hline
+	   libc\_malloc & 9 & 9 & 9 & 9 \\
+      \hline
+	   libc\_malloc2 & 9 & 9 & 9 & 9 \\
+      \hline
+	   tcmalloc & 0 & 0 & 0 & 0 \\
+      \hline
+	   tree & 42 & 42 & 42 & 42 \\
+      \hline
+	   cycles & 1 & 1 & 1 & 1 \\
+      \hline
+   \end{tabular}
+   \caption{Alias Misses per Benchmark}
+   \label{table:2}
+\end{table}
+
+\newpage
+
+Table \ref{table:3} shows the alias miss rate for each benchmark, separated by the type of alias analysis used.
+
+\begin{table} [h!]
+\centering
+   \begin{tabular} {|c|c c c c|}
+      \hline
+      & Anders & Steens & ARC & Basic \\
+      \hline
+	   bzip2 & 0.125 & 0.125 & 0.127 & 0.127 \\
+      \hline
+	   gzip & 0.035 & 0.035 & 0.035 & 0.035 \\
+      \hline
+           mcf & 0.152 & 0.154 & 0.154 & 0.154 \\
+      \hline
+	   twolf & 0.010 & 0,010 & 0,010 & 0,010 \\
+      \hline
+	   parser & 0.007 & 0.007 & 0.007 & 0.007 \\
+      \hline
+	   vpr & 0.059 & 0.059 & 0.059 & 0.059 \\
+      \hline
+	   crafty & 0.008 & 0.008 & 0.009 & 0.009 \\
+      \hline
+	   sudoku & 0.481 & 0.481 & 0.481 & 0.481 \\
+      \hline
+	   matmul & 0.317 & 0.317 & 0.317 & 0.317 \\
+      \hline
+	   dict & 0.768 & 0.768 & 0.768 & 0.768 \\
+      \hline
+	   libc\_malloc & 0.053 & 0.053 & 0.053 & 0.053 \\
+      \hline
+	   libc\_malloc2 & 0.053 & 0.053 & 0.053 & 0.053 \\
+      \hline
+	   tcmalloc & 0 & 0 & 0 & 0 \\
+      \hline
+	   tree & 0.532 & 0.532 & 0.532 & 0.532 \\
+      \hline
+	   cycles & 0.037 & 0.037 & 0.037 & 0.037 \\
+      \hline
+   \end{tabular}
+   \caption{Alias Miss Rate per Benchmark}
+   \label{table:3}
+\end{table}
+
+\newpage
+
+Table \ref{table:4} shows the alias identification rate for each benchmark, separated by the type of alias analysis used.
+
+\begin{table} [h!]
+\centering
+   \begin{tabular} {|c|c c c c|}
+      \hline
+      & Anders & Steens & ARC & Basic \\
+      \hline
+	   bzip2 & 0.990 & 0.990 & 0.990 & 0.990 \\
+      \hline
+	   gzip & 0.972 & 0.972 & 0.972 & 0.972 \\
+      \hline
+           mcf & 0.922 & 0.922 & 0.922 & 0.922 \\
+      \hline
+	   twolf & 0.998 & 0.998 & 0.998 & 0.998 \\
+      \hline
+	   parser & 0.993 & 0.993 & 0.993 & 0.993 \\
+      \hline
+	   vpr & 0.931 & 0.931 & 0.931 & 0.931 \\
+      \hline
+	   crafty & 0.998 & 0.998 & 0.998 & 0.998 \\
+      \hline
+	   sudoku & 0.606 & 0.606 & 0.606 & 0.606 \\
+      \hline
+	   matmul & 0.759 & 0.759 & 0.759 & 0.759 \\
+      \hline
+	   dict & 0.595 & 0.595 & 0.595 & 0.595 \\
+      \hline
+	   libc\_malloc & 0.966 & 0.966 & 0.966 & 0.966 \\
+      \hline
+	   libc\_malloc2 & 0.966 & 0.966 & 0.966 & 0.966 \\
+      \hline
+	   tcmalloc & 0.905 & 0.905 & 0.905 & 0.905 \\
+      \hline
+	   tree & 0.603 & 0.603 & 0.603 & 0.603 \\
+      \hline
+	   cycles & 0.871 & 0.871 & 0.871 & 0.871 \\
+      \hline
+   \end{tabular}
+   \caption{Alias Identification Rate per Benchmark}
+   \label{table:4}
+\end{table}
+
+\newpage
+
+Table \ref{table:5} shows the mean and standard deviations of the alias lifetimes for each benchmark, and are independent of any alias analyses.
+
+\begin{table} [h!]
+\centering
+   \begin{tabular} {|c|c c|}
+      \hline
+      & Mean & Std. Deviation \\
+      \hline
+	   bzip2 & 286487.505 & 843167.976 \\
+      \hline
+	   gzip & 252200.178 & 758121.815 \\
+      \hline
+           mcf & 175741.741 & 1002112.782 \\
+      \hline
+	   twolf & 68782.141 & 149007.719 \\
+      \hline
+	   parser & 3054.5 & 12379.139 \\
+      \hline
+	   vpr & 4762.618 & 24508.441 \\
+      \hline
+	   crafty & 276957.791 & 835831.453 \\
+      \hline
+	   sudoku & 184128.259 & 443716.239 \\
+      \hline
+	   matmul & 176101.094 & 748244.153 \\
+      \hline
+	   dict & 61732.615 & 172287.097 \\
+      \hline
+	   libc\_malloc & 31110.768.089 & 1330367.143 \\
+      \hline
+	   libc\_malloc2 & 279071.698 & 1263542.275 \\
+      \hline
+	   tcmalloc & 30.768.255 & 1407127.345 \\
+      \hline
+	   tree & 25.717 & 156.047 \\
+      \hline
+	   cycles & 1363.871 & 3351.797 \\
+      \hline
+   \end{tabular}
+   \caption{Mean and Standard Deviation of Benchmark Lifetimes}
+   \label{table:5}
+\end{table}
+
+\newpage
+
+Table \ref{table:6} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
+
+\begin{table} [h!]
+\centering
+   \begin{tabular} {|c|c c c c c c|}
+      \hline
+      & matmul & dict & libc\_malloc & libc\_malloc2 & tree & cycles \\
+      \hline
+      Mean & 800 & 153745.578 & 1024 & 512 & 112.706 & 16 \\
+      \hline
+      Std. Dev. & 0 & 337535.376 & 0 & 0 & 111.295 & 0 \\
+      \hline
+   \end{tabular}
+   \caption{Mean and Standard Deviation of Benchmark Allocation Sizes}
+   \label{table:6}
+\end{table}
+
+Table \ref{table:7} shows the mean and standard deviations of the allocation lifetimes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
+
+\begin{table} [h!]
+\centering
+   \begin{tabular} {|c|c c c c c c|}
+      \hline
+      & matmul & dict & libc\_malloc & libc\_malloc2 & tree & cycles \\
+      \hline
+      Mean & 8105 & 464768.632 & 0 & 0 & 12.353 & 45.352 \\
+      \hline
+      Std. Dev. & 94.130 & 258809.163 & 0 & 0 & 5.718 & 8.712 \\
+      \hline
+   \end{tabular}
+   \caption{Mean and Standard Deviation of Benchmark Allocation Lifetimes}
+   \label{table:7}
+\end{table}
+
+\section{Discussion of Results}
 After instrumenting the benchmarks to keep track of memory accesses, we found some interesting trends related to the statistics we chose to measure. While many of these trends were what we expected, others were more surprising and warranted further discussion.
 
 \section{Alias Identification}
