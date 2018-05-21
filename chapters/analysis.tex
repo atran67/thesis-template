@@ -267,7 +267,13 @@ After instrumenting the benchmarks to keep track of memory accesses, we found so
 As indicated by table \ref{table:4}, all of the alias analysis techniques identified above 90 percent of the pointers within the larger benchmarks, namely benchmarks that consisted of five or more source files. We attribute this to the larger number of virtual registers found within these benchmarks; larger programs have a higher number of memory access instructions with single virtual register operands that can be examined by alias analyses, and despite the increased program complexity, there is a lower proportion of irregular operands that are not identified. The smaller benchmarks we used had more variable identification rates, ranging from about 60 to 75 percent. We expected that none of the benchmarks would have 100 percent identification due to pointer values within the source programs that did not belong to virtual registers, such as nested getelementptr instructions. This is because the alias analyses techniques examined primarily focus on virtual registers, instead of irregular operands.
 
 \subsection{Alias Misses}
-Most of the benchmarks had relatively low alias miss rates, regardless of the alias analysis techniques. Over all of the instrumented benchmarks, low miss rates ranged from 0 to 7 percent. The number of alias misses was the same across all four analysis techniques for almost all of the benchmarks. Only three benchmarks showed differences in the number of alias misses - gzip, mcf, and crafty, and for these benchmarks, the differences were still small, typically consisting of 1 alias miss between different alias analyses. Otherwise, all four alias analysis techniques tested were shown to be equally effective for most of the instrumented benchmarks.
+Most of the benchmarks had relatively low alias miss rates, regardless of the alias analysis techniques. Over all of the instrumented benchmarks, low miss rates ranged from 0 to 7 percent. The number of alias misses was the same across all four analysis techniques for almost all of the benchmarks. Only three benchmarks showed differences in the number of alias misses - bzip2, mcf, and crafty, and for these benchmarks, the differences were still small, typically consisting of 1 alias miss between different alias analyses. Otherwise, all four alias analysis techniques tested were shown to be equally effective for most of the instrumented benchmarks.
+
+\subsubsection{bzip2}
+
+\subsubsection{mcf}
+
+\subsubsection{crafty}
 
 Some benchmarks had alias miss rates that were higher than we expected. In this case, we considered high miss rates as over 20 percent on average across all alias analyses. These benchmarks include the sudoku, matmul, dict, and tree benchmarks. After examining the original source files for these benchmarks, we provide possible reasons for the unusually high miss rates.
 
@@ -282,3 +288,9 @@ The dict benchmark creates a hash table to store a series of input strings, and 
 
 \subsubsection{Tree}
 The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
+
+\subsection{Alias Lifetimes}
+
+\subsection{Allocation Sizes}
+
+\subsection{Allocation Lifetimes}
