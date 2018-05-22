@@ -1,46 +1,46 @@
 \chapter{Analysis}
 
 \section{Results}
-Table \ref{table:1} shows the number of aliases identified for each benchmark, separated by the type of alias analysis used.
+Table \ref{table:1} shows the number of aliases identified for each benchmark, and the total number of pointers found for each benchmark. All four alias analyses identified the same aliases.
 
 \begin{table} [h!]
 \centering
    \begin{tabular} {|c|c c c c|}
       \hline
-      & Anders & Steens & ARC & Basic \\
+	   & Identified Aliases & Total Pointers \\
       \hline
-	   bzip2 & 624 & 624 & 624 & 624 \\
+	   bzip2 & 624 & 630 \\
       \hline
-	   gzip & 1170 & 1170 & 1170 & 1170 \\
+	   gzip & 1170 & 1204 \\
       \hline
-           mcf & 676 & 676 & 676 & 676 \\
+           mcf & 676 & 733 \\
       \hline
-	   twolf & 9081 & 9081 & 9081 & 9081 \\
+	   twolf & 9081 & 9099 \\
       \hline
-	   parser & 3221 & 3221 & 3221 & 3221 \\
+	   parser & 3221 & 3243 \\
       \hline
-	   vpr & 3701 & 3701 & 3701 & 3701 \\
+	   vpr & 3701 & 3975 \\
       \hline
-	   crafty & 4587 & 4587 & 4587 & 4587 \\
+	   crafty & 4587 & 4598 \\
       \hline
-	   sudoku & 77 & 77 & 77 & 77 \\
+	   sudoku & 77 & 127 \\
       \hline
-	   matmul & 41 & 41 & 41 & 41 \\
+	   matmul & 41 & 54 \\
       \hline
-	   dict & 138 & 138 & 138 & 138 \\
+	   dict & 138 & 232 \\
       \hline
-	   libc\_malloc & 171 & 171 & 171 & 171 \\
+	   libc\_malloc & 171 & 177 \\
       \hline
-	   libc\_malloc2 & 171 & 171 & 171 & 171 \\
+	   libc\_malloc2 & 171 & 177 \\
       \hline
-	   tcmalloc & 171 & 171 & 171 & 171 \\
+	   tcmalloc & 171 & 177 \\
       \hline
-	   tree & 79 & 79 & 79 & 79 \\
+	   tree & 79 & 131 \\
       \hline
-	   cycles & 27 & 27 & 27 & 27 \\
+	   cycles & 27 & 31 \\
       \hline
    \end{tabular}
-   \caption{Aliases Identified per Benchmark}
+   \caption{Aliases Identified and Total Pointers per Benchmark}
    \label{table:1}
 \end{table}
 
