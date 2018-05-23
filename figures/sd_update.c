@@ -1,4 +1,5 @@
-// update the state vectors when we pick up choice r; v=1 for setting choice; v=-1 for reverting
+// update the state vectors when we pick up choice r; 
+// v=1 for setting choice; v=-1 for reverting
 static inline int sd_update(const sdaux_t *aux, int8_t sr[729], uint8_t sc[324], int r, int v) {
    int c2, min = 10, min_c = 0;
 
