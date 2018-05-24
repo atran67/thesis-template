@@ -315,6 +315,9 @@ When lines 30 to 32 are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val
 
 \lstinputlisting[firstline=140, lastline=157, numbers=left] {figures/dict\_v1.ll}
 
+The hash value is calculated by the function \texttt{kh\_put\_str}, which replaces the macro \texttt{kh\_put}. As expected, this function utilizes multiple loops and memory accesses into the input string to produce the hash value. As with the earlier benchmarks, the high concentration of memory accesses and the iteration make this function difficult to analyze effectively using flow-insensitive alias analyses. One of the blocks illustrating these problems is shown below.
+
+\lstinputlisting[firstline=301, lastline=329, numbers=left] {figures/dict\_v1.ll}
 
 \subsubsection{Tree}
 The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
