@@ -323,6 +323,7 @@ The hash value is calculated by the function \texttt{kh\_put\_str}, which replac
 The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
 
 \subsection{Alias Lifetimes}
+The average alias lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the alias lifetimes was also high, reflecting varying access patterns. This suggests that a large number of aliases are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range aliases exist, while the averages are skewed toward longer-lived aliases.
 
 \subsection{Allocation Sizes}
 
