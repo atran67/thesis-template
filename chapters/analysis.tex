@@ -332,5 +332,6 @@ References to recursive data structures, like trees, are first loaded from the a
 The average alias lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the alias lifetimes was also high, reflecting varying access patterns. This suggests that a large number of aliases are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range aliases exist, while the averages are skewed toward longer-lived aliases.
 
 \subsection{Allocation Sizes}
+Heap allocation sizes were mostly consistent for all benchmarks. The standard deviation was zero for benchmarks that allocated uniform blocks of memory, such as matrices or nodes for a linked list. Benchmarks that handled strings, such as the tree and dict benchmarks, had more variable allocation sizes due to their varying lengths. As with the alias lifetimes, the high standard deviations also imply that the average allocation sizes for these benchmarks are skewed toward maintaining the data structure.
 
 \subsection{Allocation Lifetimes}
