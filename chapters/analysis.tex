@@ -311,6 +311,11 @@ The dict benchmark creates a hash table to store a series of input strings, and 
 
 \lstinputlisting[firstline=20, lastline=36, numbers=left] {figures/dict\_v1.c}
 
+When lines 30 to 32 are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by variable accesses. The LLVM IR for lines 30 to 32 is shown below.
+
+\lstinputlisting[firstline=140, lastline=157, numbers=left] {figures/dict\_v1.ll}
+
+
 \subsubsection{Tree}
 The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
 
