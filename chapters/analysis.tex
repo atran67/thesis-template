@@ -309,7 +309,7 @@ Each access into the matrix requires two getelementptr instructions, and two loa
 \subsubsection{Dictionary}
 The dict benchmark creates a hash table to store a series of input strings, and the resulting alias miss rate is about 77 percent. The significantly higher miss rate can be attributed to the logic related to updating and maintaining the hash table's entries. As with the Sudoku solving algorithm, the logic related to inserting variable-sized entries into the hash table rely upon several loops and conditional statements, primarily for traversing the hash table's array buckets and updating various attributes for the hash table. Unlike the Sudoku benchmark, accesses to the hash table are also more variable, and updates to the hash table that resize the hash table may occur, potentially invalidating previous aliases. Thus, hash tables are particularly difficult for the selected alias analysis techniques to effectively measure. Within the main program loop, each occurrence of a string is inserted into the hash table, as shown below, using the macros \texttt{kh\_put}, \texttt{kh\_val}, and \texttt{kh\_key} to access the hash table.
 
-\lstinputlisting[firstline=20, lastline=36, numbers=left] {figures/dict\_v1.c}
+\lstinputlisting[language=C, firstline=20, lastline=36, numbers=left] {figures/dict\_v1.c}
 
 When lines 30 to 32 are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by variable accesses. The LLVM IR for lines 30 to 32 is shown below.
 
@@ -321,6 +321,12 @@ The hash value is calculated by the function \texttt{kh\_put\_str}, which replac
 
 \subsubsection{Tree}
 The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
+
+References to recursive data structures, like trees, are first loaded from the appropriate struct field offsets, and are treated as a separate pointer for subsequent loads and stores. When these fields are repeatedly updated, as in loops, this causes aliasing issues. An excerpt from the function for collapsing tree nodes, which involves such tree pointer traversal and reassignment, is shown below in both C, and the LLVM IR, illustrating these potential issues.
+
+\lstinputlisting[firstline=151, lastline=173, numbers=left] {figures/tree.c}
+
+\lstinputlisting[firstline=579, lastline=687, numbers=left] {figures/tree.c}
 
 \subsection{Alias Lifetimes}
 The average alias lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the alias lifetimes was also high, reflecting varying access patterns. This suggests that a large number of aliases are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range aliases exist, while the averages are skewed toward longer-lived aliases.
