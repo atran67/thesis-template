@@ -271,12 +271,6 @@ Most of the benchmarks had relatively low alias miss rates, regardless of the al
 
 It's important to remember that the alias analyses are run on functions in LLVM source files, which consist of a one-dimensional array of blocks of statements. High-level control flow statements are translated to block separations, and SSA ensures that updates to existing values produce new virtual registers that may be examined in an alias analysis. Although aliases may still exist across blocks, the amount of ambiguity caused by program flow and stateful updates is reduced at this level of the program. This may explain why different analyses are often equally effective at this level, when they would have more pronounced differences in a more abstract programming language.
 
-\subsubsection{bzip2}
-
-\subsubsection{mcf}
-
-\subsubsection{crafty}
-
 \subsection{Alias Miss Rates}
 Some benchmarks had high alias miss rates. In this case, we considered high miss rates as over 20 percent on average across all alias analyses. These benchmarks include the sudoku, matmul, dict, and tree benchmarks. After examining the original source files for these benchmarks, we provide possible reasons for the unusually high miss rates.
 
