@@ -9,35 +9,35 @@ Table \ref{table:1} shows the number of aliases identified for each benchmark, t
       \hline
 	   & Identified Aliases & Total Pointers & Identification Rate \\
       \hline
-	   bzip2 & 624 & 630 \\
+	   bzip2 & 624 & 630 & 0.990 \\
       \hline
-	   gzip & 1170 & 1204 \\
+	   gzip & 1170 & 1204 & 0.972 \\
       \hline
-           mcf & 676 & 733 \\
+	   mcf & 676 & 733 & 0.922 \\
       \hline
-	   twolf & 9081 & 9099 \\
+	   twolf & 9081 & 9099 & 0.998 \\
       \hline
-	   parser & 3221 & 3243 \\
+	   parser & 3221 & 3243 & 0.993 \\
       \hline
-	   vpr & 3701 & 3975 \\
+	   vpr & 3701 & 3975 & 0.931 \\
       \hline
-	   crafty & 4587 & 4598 \\
+	   crafty & 4587 & 4598 & 0.993 \\
       \hline
-	   sudoku & 77 & 127 \\
+	   sudoku & 77 & 127 & 0.606 \\
       \hline
-	   matmul & 41 & 54 \\
+	   matmul & 41 & 54 & 0.759 \\
       \hline
-	   dict & 138 & 232 \\
+	   dict & 138 & 232 & 0.594 \\
       \hline
-	   libc\_malloc & 171 & 177 \\
+	   libc\_malloc & 171 & 177 & 0.966 \\
       \hline
-	   libc\_malloc2 & 171 & 177 \\
+	   libc\_malloc2 & 171 & 177 & 0.966 \\
       \hline
-	   tcmalloc & 171 & 177 \\
+	   tcmalloc & 171 & 177 & 0.966 \\
       \hline
-	   tree & 79 & 131 \\
+	   tree & 79 & 131 & 0.603 \\
       \hline
-	   cycles & 27 & 31 \\
+	   cycles & 27 & 31 & 0.871 \\
       \hline
    \end{tabular}
    \caption{Aliases Identified and Total Pointers per Benchmark}
@@ -136,52 +136,7 @@ Table \ref{table:3} shows the alias miss rate for each benchmark, separated by t
 
 \newpage
 
-Table \ref{table:4} shows the alias identification rate for each benchmark, separated by the type of alias analysis used.
-
-\begin{table} [h!]
-\centering
-   \begin{tabular} {|c|c c c c|}
-      \hline
-      & Anders & Steens & ARC & Basic \\
-      \hline
-	   bzip2 & 0.990 & 0.990 & 0.990 & 0.990 \\
-      \hline
-	   gzip & 0.972 & 0.972 & 0.972 & 0.972 \\
-      \hline
-           mcf & 0.922 & 0.922 & 0.922 & 0.922 \\
-      \hline
-	   twolf & 0.998 & 0.998 & 0.998 & 0.998 \\
-      \hline
-	   parser & 0.993 & 0.993 & 0.993 & 0.993 \\
-      \hline
-	   vpr & 0.931 & 0.931 & 0.931 & 0.931 \\
-      \hline
-	   crafty & 0.998 & 0.998 & 0.998 & 0.998 \\
-      \hline
-	   sudoku & 0.606 & 0.606 & 0.606 & 0.606 \\
-      \hline
-	   matmul & 0.759 & 0.759 & 0.759 & 0.759 \\
-      \hline
-	   dict & 0.595 & 0.595 & 0.595 & 0.595 \\
-      \hline
-	   libc\_malloc & 0.966 & 0.966 & 0.966 & 0.966 \\
-      \hline
-	   libc\_malloc2 & 0.966 & 0.966 & 0.966 & 0.966 \\
-      \hline
-	   tcmalloc & 0.905 & 0.905 & 0.905 & 0.905 \\
-      \hline
-	   tree & 0.603 & 0.603 & 0.603 & 0.603 \\
-      \hline
-	   cycles & 0.871 & 0.871 & 0.871 & 0.871 \\
-      \hline
-   \end{tabular}
-   \caption{Alias Identification Rate per Benchmark}
-   \label{table:4}
-\end{table}
-
-\newpage
-
-Table \ref{table:5} shows the mean and standard deviations of the alias lifetimes for each benchmark, and are independent of any alias analyses.
+Table \ref{table:4} shows the mean and standard deviations of the alias lifetimes for each benchmark, and are independent of any alias analyses.
 
 \begin{table} [h!]
 \centering
@@ -221,12 +176,12 @@ Table \ref{table:5} shows the mean and standard deviations of the alias lifetime
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Lifetimes}
-   \label{table:5}
+   \label{table:4}
 \end{table}
 
 \newpage
 
-Table \ref{table:6} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
+Table \ref{table:5} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
 
 \begin{table} [h!]
 \centering
@@ -240,10 +195,10 @@ Table \ref{table:6} shows the mean and standard deviations of the allocation siz
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Allocation Sizes}
-   \label{table:6}
+   \label{table:5}
 \end{table}
 
-Table \ref{table:7} shows the mean and standard deviations of the allocation lifetimes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
+Table \ref{table:6} shows the mean and standard deviations of the allocation lifetimes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
 
 \begin{table} [h!]
 \centering
@@ -257,14 +212,14 @@ Table \ref{table:7} shows the mean and standard deviations of the allocation lif
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Allocation Lifetimes}
-   \label{table:7}
+   \label{table:6}
 \end{table}
 
 \section{Discussion of Results}
 After instrumenting the benchmarks to keep track of memory accesses, we found some interesting trends related to the statistics we chose to measure. While many of these trends were what we expected, others were more surprising and warranted further discussion.
 
 \subsection{Alias Identification}
-As indicated by table \ref{table:4}, all of the alias analysis techniques identified above 90 percent of the pointers within the larger benchmarks, namely benchmarks that consisted of five or more source files. We attribute this to the larger number of virtual registers found within these benchmarks; larger programs have a higher number of memory access instructions with single virtual register operands that can be examined by alias analyses, and despite the increased program complexity, there is a lower proportion of irregular operands that are not identified. The smaller benchmarks we used had more variable identification rates, ranging from about 60 to 75 percent. We expected that none of the benchmarks would have 100 percent identification due to pointer values within the source programs that did not belong to virtual registers, such as nested getelementptr instructions. This is because the alias analyses techniques examined primarily focus on virtual registers, instead of irregular operands.
+As indicated by table \ref{table:1}, all of the alias analysis techniques identified above 90 percent of the pointers within the larger benchmarks, namely benchmarks that consisted of five or more source files. We attribute this to the larger number of virtual registers found within these benchmarks; larger programs have a higher number of memory access instructions with single virtual register operands that can be examined by alias analyses, and despite the increased program complexity, there is a lower proportion of irregular operands that are not identified. The smaller benchmarks we used had more variable identification rates, ranging from about 60 to 75 percent. We expected that none of the benchmarks would have 100 percent identification due to pointer values within the source programs that did not belong to virtual registers, such as nested getelementptr instructions. This is because the alias analyses techniques examined primarily focus on virtual registers, instead of irregular operands.
 
 \subsection{Alias Misses}
 Most of the benchmarks had relatively low alias miss rates, regardless of the alias analysis techniques. Over all of the instrumented benchmarks, low miss rates ranged from 0 to 7 percent. The number of alias misses was the same across all four analysis techniques for almost all of the benchmarks. Only three benchmarks showed differences in the number of alias misses - bzip2, mcf, and crafty, and for these benchmarks, the differences were still small, typically consisting of one alias miss between different alias analyses. Otherwise, all four alias analysis techniques tested were shown to be equally effective for most of the instrumented benchmarks.
