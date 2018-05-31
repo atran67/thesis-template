@@ -273,9 +273,9 @@ The tree benchmark creates a search tree from a series of input strings that has
 
 References to recursive data structures, like trees, are first loaded from the appropriate struct field offsets, and are treated as a separate pointer for subsequent loads and stores. When these fields are repeatedly updated, as in loops, this causes aliasing issues. An excerpt from the function for collapsing tree nodes, which involves such tree pointer traversal and reassignment, is shown below in both C, and the LLVM IR, illustrating these potential issues.
 
-\lstinputlisting[firstline=151, lastline=173, numbers=left] {figures/tree.c}
+\lstinputlisting[language=C, firstline=151, lastline=173, numbers=left] {figures/tree.c}
 
-\lstinputlisting[firstline=579, lastline=687, numbers=left] {figures/tree.c}
+\lstinputlisting[firstline=579, lastline=687, numbers=left] {figures/tree.ll}
 
 \subsection{Alias Lifetimes}
 The average alias lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the alias lifetimes was also high, reflecting varying access patterns. This suggests that a large number of aliases are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range aliases exist, while the averages are skewed toward longer-lived aliases.
