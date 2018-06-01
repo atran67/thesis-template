@@ -183,7 +183,7 @@ Within the matrix multiplication function in Figure \ref{fig:mmc}, there are two
 Each access into the matrix requires two getelementptr instructions, as on lines 4 and 13, and two load instructions, as on lines 5 and 14, to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, none of which can be analyzed well by flow-insensitive alias analyses because they are within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. For this function, the Steensgaard Analysis lists registers \texttt{\%68}, \texttt{\%78}, and \texttt{\%88} as possible aliases of pointer register \texttt{\%37}, where all of these pointers exist in different loops. The loop body from lines 13 to 16 of Figure \ref{fig:mmc} suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body. Note that register \texttt{\%78} exists in this loop, leading to mismatches with earlier aliases.
 
 \begin{figure} [h]
-  \lstinputlisting[basicstyle=\ttfamily\small, firstline=312, lastline=346, numbers=left] {figures/matmul\_v1.ll}
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=312, lastline=346, numbers=left] {figures/matmul_v1.ll}
   \caption{Inner Loop translated to LLVM}
   \label{fig:mmll2}
 \end{figure}
