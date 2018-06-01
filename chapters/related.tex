@@ -3,7 +3,7 @@
 Much work has been done in the area of alias analysis, both in proposing new alias analysis techniques, and for evaluating such techniques. Because alias analysis is an undecidable problem \cite{undecidable}, many potential avenues exist for developing more precise or efficient approximations.
 
 \section{Current Alias Analyses}
-Several existing alias analyses are currently used as part of contemporary compiler optimizations. These analyses take different approaches in identifying aliases, and thus vary in terms of efficiency and effectiveness. We are interested in the alias analysis implementations that target LLVM instructions. The following example program is used to demonstrate some of the following alias analyses.
+Several existing alias analyses are currently used as part of contemporary compiler optimizations. These analyses take different approaches in identifying aliases, and thus vary in terms of efficiency and effectiveness. We are interested in the alias analysis implementations that target LLVM instructions. The following example C program is used to demonstrate some of the differences between the following alias analyses.
 
 \begin{figure} [h]
    \lstinputlisting[language=C, basicstyle=\ttfamily\small, numbers=left] {figures/codex.c}
