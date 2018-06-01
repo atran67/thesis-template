@@ -153,7 +153,7 @@ The statement on line 6 updates the state vectors and the binary matrix by itera
 
 \lstinputlisting[basicstyle=\ttfamily\small, firstline=758, lastline=776, numbers=left] {figures/sudoku_v1.ll}
 
-All of these memory accesses are contained within a loop, and cannot be analyzed well be flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
+All of these memory accesses are contained within a loop, and cannot be analyzed well by flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
 
 \subsection{Matrix Multiplication}
 The matmul benchmark multiplies two randomly-generated 100 by 100 matrices together, and has an average miss rate of about 32 percent. The matrices are dynamically allocated, providing a large number of potential pointers into the matrices to alias with. The classic multiplication algorithm utilizes three nested loops to calculate the resulting matrix. As with the sudoku benchmark, the prominent amount of iteration within this program introduced additional program flow that none of the given alias analyses could reliably address. Compared with the sudoku benchmark, the larger amount of memory used within this benchmark did not result in a higher percentage of alias misses; even though matrix multiplication still requires a large amount of memory for the input matrices, the loop body itself features fewer flow-sensitive statements, resulting in a lower overall miss rate. The C implementation of the matrix multiplication function is shown below.
@@ -164,9 +164,9 @@ Within the matrix multiplication function, there are two areas of interest: the 
 
 \lstinputlisting[basicstyle=\ttfamily\small, firstline=233, lastline=251, numbers=left] {figures/matmul_v1.ll}
 
-Each access into the matrix requires two getelementptr instructions, and two load instructions to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, all of which cannot be analyzed well by flow-insensitive alias analyses, due to existing within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. The loop body from lines 13 to 16 suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body.
+Each access into the matrix requires two getelementptr instructions, as on lines 4 and 13, and two load instructions, as on lines 5 and 14, to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, none of which can be analyzed well by flow-insensitive alias analyses because they are within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. The loop body from lines 13 to 16 suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body.
 
-\lstinputlisting[basicstyle=\ttfamily\small, firstline=301, lastline=346, numbers=left] {figures/matmul\_v1.ll}
+\lstinputlisting[basicstyle=\ttfamily\small, firstline=312, lastline=346, numbers=left] {figures/matmul\_v1.ll}
 
 \subsection{Dictionary}
 The dict benchmark creates a hash table to store a series of input strings, and the resulting alias miss rate is about 77 percent. The significantly higher miss rate can be attributed to the logic related to updating and maintaining the hash table's entries. As with the Sudoku solving algorithm, the logic related to inserting variable-sized entries into the hash table rely upon several loops and conditional statements, primarily for traversing the hash table's array buckets and updating various attributes for the hash table. Unlike the Sudoku benchmark, accesses to the hash table are also more variable, and updates to the hash table that resize the hash table may occur, potentially invalidating previous aliases. Thus, hash tables are particularly difficult for the selected alias analysis techniques to effectively measure. Within the main program loop, each occurrence of a string is inserted into the hash table, as shown below, using the macros \texttt{kh\_put}, \texttt{kh\_val}, and \texttt{kh\_key} to access the hash table.
@@ -190,8 +190,8 @@ References to recursive data structures, like trees, are first loaded from the a
 
 \lstinputlisting[basicstyle=\ttfamily\small, firstline=579, lastline=687, numbers=left] {figures/tree.ll}
 
-\section{Alias Lifetimes}
-Table \ref{table:4} shows the mean and standard deviations of the alias lifetimes for each benchmark, and are independent of any alias analyses.
+\section{Pointer Lifetimes}
+Table \ref{table:4} shows the mean and standard deviations of the pointer lifetimes for each benchmark, and are independent of any alias analyses.
 
 \begin{table} [h!]
 \centering
@@ -230,11 +230,11 @@ Table \ref{table:4} shows the mean and standard deviations of the alias lifetime
 	   cycles & 1363.871 & 3351.797 \\
       \hline
    \end{tabular}
-   \caption{Mean and Standard Deviation of Benchmark Lifetimes}
+   \caption{Mean and Standard Deviation of Benchmark Pointer Lifetimes}
    \label{table:4}
 \end{table}
 
-The average alias lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the alias lifetimes was also high, reflecting varying access patterns. This suggests that a large number of aliases are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range aliases exist, while the averages are skewed toward longer-lived aliases.
+The average pointer lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the pointer lifetimes was also high, reflecting varying access patterns. This suggests that a large number of pointers are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range pointers exist, while the averages are skewed toward longer-lived pointers.
 
 \section{Allocation Sizes}
 Table \ref{table:5} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
