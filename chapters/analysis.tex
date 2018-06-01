@@ -149,6 +149,7 @@ For this benchmark, the function \texttt{sd\_update} has the highest potential f
 
 \begin{figure} [h]
   \lstinputlisting[basicstyle=\ttfamily\small, language=C, numbers=left] {figures/sd_update.c}
+  \caption{\texttt{sd\_update} implementation from the Sudoku Benchmark}
   \label{fig:sdc}
 \end{figure}
 
@@ -156,30 +157,34 @@ The statement on line 6 of Figure \ref{fig:sdc} updates the state vectors and th
 
 \begin{figure} [h]
   \lstinputlisting[basicstyle=\ttfamily\small, firstline=758, lastline=776, numbers=left] {figures/sudoku_v1.ll}
+  \caption{LLVM instructions from the Sudoku Benchmark}
   \label{fig:sdll}
 \end{figure}
 
-All of the memory accesses in Figure \ref{fig:sdll} are contained within a loop, and cannot be analyzed well by flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. As an example, for pointer register \%37, the Steensgaard Analysis gives registers \%57, \%79, \%97, \%103, and \%158 as possible aliases, but all of these pointers belong to blocks at differing loop levels, resulting in higher miss rates. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
+All of the memory accesses in Figure \ref{fig:sdll} are contained within a loop, and cannot be analyzed well by flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. As an example, for pointer register \texttt{\%37}, the Steensgaard Analysis gives registers \texttt{\%57}, \texttt{\%79}, \texttt{\%97}, \texttt{\%103}, and \texttt{\%158} as possible aliases, but all of these pointers belong to blocks at differing loop levels, resulting in higher miss rates. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
 
 \subsection{Matrix Multiplication}
 The matmul benchmark multiplies two randomly-generated 100 by 100 matrices together, and has an average miss rate of about 32 percent. The matrices are dynamically allocated, providing a large number of potential pointers into the matrices to alias with. The classic multiplication algorithm utilizes three nested loops to calculate the resulting matrix. As with the sudoku benchmark, the prominent amount of iteration within this program introduced additional program flow that none of the given alias analyses could reliably address. Compared with the sudoku benchmark, the larger amount of memory used within this benchmark did not result in a higher percentage of alias misses; even though matrix multiplication still requires a large amount of memory for the input matrices, the loop body itself features fewer flow-sensitive statements, resulting in a lower overall miss rate. The C implementation of the matrix multiplication function is shown below.
 
 \begin{figure} [h]
   \lstinputlisting[language=C, basicstyle=\ttfamily\small, numbers=left] {figures/matmul.c}
+  \caption{Matrix Multiplication Function}
   \label{fig:mmc}
 \end{figure}
 
 Within the matrix multiplication function in Figure \ref{fig:mmc}, there are two areas of interest: the transposing of the second matrix on lines 6 to 9, and the calculation of each entry on lines 13 to 16. The body of the inner loop on line 9, translated to LLVM IR, is shown below.
 
 \begin{figure} [h]
-  \lstinputlisting[basicstyle=\ttfamily\small, firstline=233, lastline=251, numbers=left] {figures/matmul_v1.ll}
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=233, lastline=250, numbers=left] {figures/matmul_v1.ll}
+  \caption{Transpose Loop translated to LLVM}
   \label{fig:mmll}
 \end{figure}
 
-Each access into the matrix requires two getelementptr instructions, as on lines 4 and 13, and two load instructions, as on lines 5 and 14, to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, none of which can be analyzed well by flow-insensitive alias analyses because they are within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. The loop body from lines 13 to 16 suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body.
+Each access into the matrix requires two getelementptr instructions, as on lines 4 and 13, and two load instructions, as on lines 5 and 14, to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, none of which can be analyzed well by flow-insensitive alias analyses because they are within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. For this function, the Steensgaard Analysis lists registers \texttt{\%68}, \texttt{\%78}, and \texttt{\%88} as possible aliases of pointer register \texttt{\%37}, where all of these pointers exist in different loops. The loop body from lines 13 to 16 of Figure \ref{fig:mmc} suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body. Note that register \texttt{\%78} exists in this loop, leading to mismatches with earlier aliases.
 
 \begin{figure} [h]
   \lstinputlisting[basicstyle=\ttfamily\small, firstline=312, lastline=346, numbers=left] {figures/matmul\_v1.ll}
+  \caption{Inner Loop translated to LLVM}
   \label{fig:mmll2}
 \end{figure}
 
