@@ -147,48 +147,78 @@ The sudoku benchmark calculates the solution for nine example sudoku problems th
 
 For this benchmark, the function \texttt{sd\_update} has the highest potential for alias misses; as the name suggests, this function updates the binary matrix used to represent the sudoku puzzle, and is frequently called throughout the benchmark. The C implementation of this function is shown below.
 
-\lstinputlisting[basicstyle=\ttfamily\small, language=C, numbers=left] {figures/sd_update.c}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, language=C, numbers=left] {figures/sd_update.c}
+  \label{fig:sdc}
+\end{figure}
 
-The statement on line 6 updates the state vectors and the binary matrix by iterating through the rows and columns. Referencing the matrix itself requires indirection into a structure and a field reference, followed by multiple indexes into an array. Consequently, this is translated into multiple getelementptr and load instructions to access the appropriate entry in the matrix. Accessing the array in this manner is fairly common, and occurs several times at varying levels of nested loops. The statement translated into the LLVM IR is shown below.
+The statement on line 6 of Figure \ref{fig:sdc} updates the state vectors and the binary matrix by iterating through the rows and columns. Referencing the matrix itself requires indirection into a structure and a field reference, followed by multiple indexes into an array. Consequently, this is translated into multiple getelementptr and load instructions to access the appropriate entry in the matrix. Accessing the array in this manner is fairly common, and occurs several times at varying levels of nested loops. The statement translated into the LLVM IR is shown below.
 
-\lstinputlisting[basicstyle=\ttfamily\small, firstline=758, lastline=776, numbers=left] {figures/sudoku_v1.ll}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=758, lastline=776, numbers=left] {figures/sudoku_v1.ll}
+  \label{fig:sdll}
+\end{figure}
 
-All of these memory accesses are contained within a loop, and cannot be analyzed well by flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
+All of the memory accesses in Figure \ref{fig:sdll} are contained within a loop, and cannot be analyzed well by flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
 
 \subsection{Matrix Multiplication}
 The matmul benchmark multiplies two randomly-generated 100 by 100 matrices together, and has an average miss rate of about 32 percent. The matrices are dynamically allocated, providing a large number of potential pointers into the matrices to alias with. The classic multiplication algorithm utilizes three nested loops to calculate the resulting matrix. As with the sudoku benchmark, the prominent amount of iteration within this program introduced additional program flow that none of the given alias analyses could reliably address. Compared with the sudoku benchmark, the larger amount of memory used within this benchmark did not result in a higher percentage of alias misses; even though matrix multiplication still requires a large amount of memory for the input matrices, the loop body itself features fewer flow-sensitive statements, resulting in a lower overall miss rate. The C implementation of the matrix multiplication function is shown below.
 
-\lstinputlisting[language=C, basicstyle=\ttfamily\small, numbers=left] {figures/matmul.c}
+\begin{figure} [h]
+  \lstinputlisting[language=C, basicstyle=\ttfamily\small, numbers=left] {figures/matmul.c}
+  \label{fig:mmc}
+\end{figure}
 
-Within the matrix multiplication function, there are two areas of interest: the transposing of the second matrix on lines 6 to 9, and the calculation of each entry on lines 13 to 16. The body of the inner loop on line 9, translated to LLVM IR, is shown below.
+Within the matrix multiplication function in Figure \ref{fig:mmc}, there are two areas of interest: the transposing of the second matrix on lines 6 to 9, and the calculation of each entry on lines 13 to 16. The body of the inner loop on line 9, translated to LLVM IR, is shown below.
 
-\lstinputlisting[basicstyle=\ttfamily\small, firstline=233, lastline=251, numbers=left] {figures/matmul_v1.ll}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=233, lastline=251, numbers=left] {figures/matmul_v1.ll}
+  \label{fig:mmll}
+\end{figure}
 
 Each access into the matrix requires two getelementptr instructions, as on lines 4 and 13, and two load instructions, as on lines 5 and 14, to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, none of which can be analyzed well by flow-insensitive alias analyses because they are within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. The loop body from lines 13 to 16 suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body.
 
-\lstinputlisting[basicstyle=\ttfamily\small, firstline=312, lastline=346, numbers=left] {figures/matmul\_v1.ll}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=312, lastline=346, numbers=left] {figures/matmul\_v1.ll}
+  \label{fig:mmll2}
+\end{figure}
 
 \subsection{Dictionary}
 The dict benchmark creates a hash table to store a series of input strings, and the resulting alias miss rate is about 77 percent. The significantly higher miss rate can be attributed to the logic related to updating and maintaining the hash table's entries. As with the Sudoku solving algorithm, the logic related to inserting variable-sized entries into the hash table rely upon several loops and conditional statements, primarily for traversing the hash table's array buckets and updating various attributes for the hash table. Unlike the Sudoku benchmark, accesses to the hash table are also more variable, and updates to the hash table that resize the hash table may occur, potentially invalidating previous aliases. Thus, hash tables are particularly difficult for the selected alias analysis techniques to effectively measure. Within the main program loop, each occurrence of a string is inserted into the hash table, as shown below, using the macros \texttt{kh\_put}, \texttt{kh\_val}, and \texttt{kh\_key} to access the hash table.
 
-\lstinputlisting[basicstyle=\ttfamily\small, language=C, firstline=20, lastline=36, numbers=left] {figures/dict_v1.c}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, language=C, firstline=20, lastline=36, numbers=left] {figures/dict_v1.c}
+  \label{fig:dictc}
+\end{figure}
 
-When lines 11 to 13 are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by variable accesses. The LLVM IR for lines 11 to 13 is shown below.
+When lines 11 to 13 in Figure \ref{fig:dictc} are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by variable accesses. The LLVM IR for lines 11 to 13 is shown below.
 
-\lstinputlisting[basicstyle=\ttfamily\small, firstline=140, lastline=157, numbers=left] {figures/dict_v1.ll}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=140, lastline=157, numbers=left] {figures/dict_v1.ll}
+  \label{fig:dictll}
+\end{figure}
 
 The hash value is calculated by the function \texttt{kh\_put\_str}, which replaces the macro \texttt{kh\_put}. As expected, this function utilizes multiple loops and memory accesses into the input string to produce the hash value. As with the earlier benchmarks, the high concentration of memory accesses and the iteration make this function difficult to analyze effectively using flow-insensitive alias analyses. One of the blocks illustrating these problems is shown below.
 
-\lstinputlisting[basicstyle=\ttfamily\small, firstline=301, lastline=329, numbers=left] {figures/dict_v1.ll}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=301, lastline=323, numbers=left] {figures/dict_v1.ll}
+  \label{fig:dictll2}
+\end{figure}
 
 \subsection{Tree}
 The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
 
-References to recursive data structures, like trees, are first loaded from the appropriate struct field offsets, and are treated as a separate pointer for subsequent loads and stores. When these fields are repeatedly updated, as in loops, this causes aliasing issues. An excerpt from the function for collapsing tree nodes, which involves such tree pointer traversal and reassignment, is shown below in both C, and the LLVM IR, illustrating these potential issues.
+References to recursive data structures, like trees, are first loaded from the appropriate struct field offsets, and are treated as a separate pointer for subsequent loads and stores. When these fields are repeatedly updated, as in loops, this causes aliasing issues. Excerpts from the function for collapsing tree nodes, which involves such tree pointer traversal and reassignment, is shown below in both C, and the LLVM IR, illustrating these potential issues.
 
-\lstinputlisting[basicstyle=\ttfamily\small, language=C, firstline=151, lastline=173, numbers=left] {figures/tree.c}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, language=C, firstline=151, lastline=173, numbers=left] {figures/tree.c}
+  \label{fig:treec}
+\end{figure}
 
-\lstinputlisting[basicstyle=\ttfamily\small, firstline=579, lastline=687, numbers=left] {figures/tree.ll}
+\begin{figure} [h]
+  \lstinputlisting[basicstyle=\ttfamily\small, firstline=579, lastline=687, numbers=left] {figures/tree.ll}
+  \label{fig:treell}
+\end{figure}
 
 \section{Pointer Lifetimes}
 Table \ref{table:4} shows the mean and standard deviations of the pointer lifetimes for each benchmark, and are independent of any alias analyses.
