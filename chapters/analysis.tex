@@ -205,10 +205,11 @@ When lines 10 to 12 in Figure \ref{fig:dictc} are translated to LLVM, \texttt{kh
   \label{fig:dictll}
 \end{figure}
 
-The hash value is calculated by the function \texttt{kh\_put\_str}, which replaces the macro \texttt{kh\_put}. As expected, this function utilizes multiple loops and memory accesses into the input string to produce the hash value. As with the earlier benchmarks, the high concentration of memory accesses and the iteration make this function difficult to analyze effectively using flow-insensitive alias analyses. One of the blocks illustrating these problems is shown below.
+The hash value is calculated by the function \texttt{kh\_put\_str}, which replaces the macro \texttt{kh\_put}. This function utilizes multiple conditional statements and memory accesses into the input string to produce the hash value. Unlike the earlier benchmarks, most of the memory accesses refer to the same struct using getelementptr, but with different offsets to produce distinct byte pointers. The inability to distinguish between these varying offsets makes this function difficult to analyze effectively using flow-insensitive alias analyses. One of the blocks illustrating these problems is shown below. Both the Steensgaard and the Andersen Analysis treats accesses to pointer register \texttt{\%4} with different offsets, such as \texttt{\%110} with an offset of 5, and \texttt{\%280} with an offset of 4, across multiple blocks, as aliases based on the original struct pointer, leading to a high number of misses.
 
 \begin{figure} [h]
   \lstinputlisting[basicstyle=\ttfamily\small, firstline=301, lastline=323, numbers=left] {figures/dict_v1.ll}
+  \caption{Excerpt from the Hashing Function}
   \label{fig:dictll2}
 \end{figure}
 
