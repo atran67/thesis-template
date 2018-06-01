@@ -1,6 +1,8 @@
 \chapter{Analysis}
 
-\section{Results}
+After instrumenting the benchmarks to keep track of memory accesses, we found some interesting trends related to the statistics we chose to measure. While many of these trends were what we expected, others were more surprising and warranted further discussion.
+
+\section{Alias Identification}
 Table \ref{table:1} shows the number of aliases identified for each benchmark, the total number of pointers, and the identification rate found for each benchmark. For all the benchmarks, all four alias analyses identified the same number of aliases.
 
 \begin{table} [h!]
@@ -44,8 +46,9 @@ Table \ref{table:1} shows the number of aliases identified for each benchmark, t
    \label{table:1}
 \end{table}
 
-\newpage
+As indicated by Table \ref{table:1}, all of the alias analysis techniques identified above 90 percent of the pointers within the larger benchmarks, namely benchmarks that consisted of five or more source files. We attribute this to the larger number of virtual registers found within these benchmarks; larger programs have a higher number of memory access instructions with single virtual register operands that can be examined by alias analyses, and despite the increased program complexity, there is a lower proportion of irregular operands that are not identified. The smaller benchmarks we used had more variable identification rates, ranging from about 60 to 75 percent. We expected that none of the benchmarks would have 100 percent identification due to pointer values within the source programs that did not belong to virtual registers, such as nested getelementptr instructions. This is because the alias analyses techniques examined primarily focus on virtual registers, instead of irregular operands.
 
+\section{Alias Misses}
 Table \ref{table:2} shows the number of alias misses for each benchmark, separated by the type of alias analysis used.
 
 \begin{table} [h!]
@@ -89,8 +92,11 @@ Table \ref{table:2} shows the number of alias misses for each benchmark, separat
    \label{table:2}
 \end{table}
 
-\newpage
+Most of the benchmarks had relatively low alias miss rates, regardless of the alias analysis techniques. Over all of the instrumented benchmarks, low miss rates ranged from 0 to 7 percent. The number of alias misses was the same across all four analysis techniques for almost all of the benchmarks. Only three benchmarks showed differences in the number of alias misses - bzip2, mcf, and crafty, and for these benchmarks, the differences were still small, typically consisting of one alias miss between different alias analyses. Otherwise, all four alias analysis techniques tested were shown to be equally effective for most of the instrumented benchmarks.
 
+It's important to remember that the alias analyses are run on functions in LLVM source files, which consist of a one-dimensional array of blocks of statements. High-level control flow statements are translated to block separations, and SSA ensures that updates to existing values produce new virtual registers that may be examined in an alias analysis. Although aliases may still exist across blocks, the amount of ambiguity caused by program flow and stateful updates is reduced at this level of the program. This may explain why different analyses are often equally effective at this level, when they would have more pronounced differences in a more abstract programming language.
+
+\section{Alias Miss Rates}
 Table \ref{table:3} shows the alias miss rate for each benchmark, separated by the type of alias analysis used.
 
 \begin{table} [h!]
@@ -134,8 +140,57 @@ Table \ref{table:3} shows the alias miss rate for each benchmark, separated by t
    \label{table:3}
 \end{table}
 
-\newpage
+Some benchmarks had high alias miss rates. In this case, we considered high miss rates as over 20 percent on average across all alias analyses. These benchmarks include the sudoku, matmul, dict, and tree benchmarks. After examining the original source files for these benchmarks, we provide possible reasons for the unusually high miss rates.
 
+\subsection{Sudoku}
+The sudoku benchmark calculates the solution for nine example sudoku problems that are considered difficult for machines to solve by brute force. Across all alias analyses, this benchmark has an average miss rate of about 48 percent. The solving algorithm uses a binary matrix, declared as a two-dimensional array, representing a series of constraints that make up a valid sudoku puzzle, and iteratively tries different sets of constraints until a valid solution is found. As expected, the brute-force algorithm often requires significant backtracking, iteration, and conditional statements related to updating the binary matrix, resulting in numerous basic blocks within the associated LLVM files. Because none of the tested alias analysis techniques are flow-sensitive, they would not be expected to easily identify many of the resulting pointers for possible aliasing within the solution function.
+
+For this benchmark, the function \texttt{sd\_update} has the highest potential for alias misses; as the name suggests, this function updates the binary matrix used to represent the sudoku puzzle, and is frequently called throughout the benchmark. The C implementation of this function is shown below.
+
+\lstinputlisting[language=C, numbers=left] {figures/sd_update.c}
+
+The statement on line 6 updates the state vectors and the binary matrix by iterating through the rows and columns. Referencing the matrix itself requires indirection into a structure and a field reference, followed by multiple indexes into an array. Consequently, this is translated into multiple getelementptr and load instructions to access the appropriate entry in the matrix. Accessing the array in this manner is fairly common, and occurs several times at varying levels of nested loops. The statement translated into the LLVM IR is shown below.
+
+\lstinputlisting[firstline=758, lastline=776, numbers=left] {figures/sudoku_v1.ll}
+
+All of these memory accesses are contained within a loop, and cannot be analyzed well be flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
+
+\subsection{Matrix Multiplication}
+The matmul benchmark multiplies two randomly-generated 100 by 100 matrices together, and has an average miss rate of about 32 percent. The matrices are dynamically allocated, providing a large number of potential pointers into the matrices to alias with. The classic multiplication algorithm utilizes three nested loops to calculate the resulting matrix. As with the sudoku benchmark, the prominent amount of iteration within this program introduced additional program flow that none of the given alias analyses could reliably address. Compared with the sudoku benchmark, the larger amount of memory used within this benchmark did not result in a higher percentage of alias misses; even though matrix multiplication still requires a large amount of memory for the input matrices, the loop body itself features fewer flow-sensitive statements, resulting in a lower overall miss rate. The C implementation of the matrix multiplication function is shown below.
+
+\lstinputlisting[language=C, numbers=left] {figures/matmul.c}
+
+Within the matrix multiplication function, there are two areas of interest: the transposing of the second matrix on lines 6 to 9, and the calculation of each entry on lines 13 to 16. The body of the inner loop on line 9, translated to LLVM IR, is shown below.
+
+\lstinputlisting[firstline=233, lastline=251, numbers=left] {figures/matmul_v1.ll}
+
+Each access into the matrix requires two getelementptr instructions, and two load instructions to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, all of which cannot be analyzed well by flow-insensitive alias analyses, due to existing within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. The loop body from lines 13 to 16 suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body.
+
+\lstinputlisting[firstline=301, lastline=346, numbers=left] {figures/matmul\_v1.ll}
+
+\subsection{Dictionary}
+The dict benchmark creates a hash table to store a series of input strings, and the resulting alias miss rate is about 77 percent. The significantly higher miss rate can be attributed to the logic related to updating and maintaining the hash table's entries. As with the Sudoku solving algorithm, the logic related to inserting variable-sized entries into the hash table rely upon several loops and conditional statements, primarily for traversing the hash table's array buckets and updating various attributes for the hash table. Unlike the Sudoku benchmark, accesses to the hash table are also more variable, and updates to the hash table that resize the hash table may occur, potentially invalidating previous aliases. Thus, hash tables are particularly difficult for the selected alias analysis techniques to effectively measure. Within the main program loop, each occurrence of a string is inserted into the hash table, as shown below, using the macros \texttt{kh\_put}, \texttt{kh\_val}, and \texttt{kh\_key} to access the hash table.
+
+\lstinputlisting[language=C, firstline=20, lastline=36, numbers=left] {figures/dict_v1.c}
+
+When lines 11 to 13 are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by variable accesses. The LLVM IR for lines 11 to 13 is shown below.
+
+\lstinputlisting[firstline=140, lastline=157, numbers=left] {figures/dict_v1.ll}
+
+The hash value is calculated by the function \texttt{kh\_put\_str}, which replaces the macro \texttt{kh\_put}. As expected, this function utilizes multiple loops and memory accesses into the input string to produce the hash value. As with the earlier benchmarks, the high concentration of memory accesses and the iteration make this function difficult to analyze effectively using flow-insensitive alias analyses. One of the blocks illustrating these problems is shown below.
+
+\lstinputlisting[firstline=301, lastline=329, numbers=left] {figures/dict_v1.ll}
+
+\subsection{Tree}
+The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
+
+References to recursive data structures, like trees, are first loaded from the appropriate struct field offsets, and are treated as a separate pointer for subsequent loads and stores. When these fields are repeatedly updated, as in loops, this causes aliasing issues. An excerpt from the function for collapsing tree nodes, which involves such tree pointer traversal and reassignment, is shown below in both C, and the LLVM IR, illustrating these potential issues.
+
+\lstinputlisting[language=C, firstline=151, lastline=173, numbers=left] {figures/tree.c}
+
+\lstinputlisting[firstline=579, lastline=687, numbers=left] {figures/tree.ll}
+
+\section{Alias Lifetimes}
 Table \ref{table:4} shows the mean and standard deviations of the alias lifetimes for each benchmark, and are independent of any alias analyses.
 
 \begin{table} [h!]
@@ -179,8 +234,9 @@ Table \ref{table:4} shows the mean and standard deviations of the alias lifetime
    \label{table:4}
 \end{table}
 
-\newpage
+The average alias lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the alias lifetimes was also high, reflecting varying access patterns. This suggests that a large number of aliases are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range aliases exist, while the averages are skewed toward longer-lived aliases.
 
+\section{Allocation Sizes}
 Table \ref{table:5} shows the mean and standard deviations of the allocation sizes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
 
 \begin{table} [h!]
@@ -198,6 +254,9 @@ Table \ref{table:5} shows the mean and standard deviations of the allocation siz
    \label{table:5}
 \end{table}
 
+Heap allocation sizes were mostly consistent for all benchmarks. The standard deviation was zero for benchmarks that allocated uniform blocks of memory, such as matrices or nodes for a linked list. Benchmarks that handled strings, such as the tree and dict benchmarks, had more variable allocation sizes due to their varying lengths. As with the alias lifetimes, the high standard deviations also imply that the average allocation sizes for these benchmarks are skewed toward maintaining the data structures.
+
+\section{Allocation Lifetimes}
 Table \ref{table:6} shows the mean and standard deviations of the allocation lifetimes for benchmarks that dynamically allocate memory, and are independent of any alias analyses.
 
 \begin{table} [h!]
@@ -215,73 +274,4 @@ Table \ref{table:6} shows the mean and standard deviations of the allocation lif
    \label{table:6}
 \end{table}
 
-\section{Discussion of Results}
-After instrumenting the benchmarks to keep track of memory accesses, we found some interesting trends related to the statistics we chose to measure. While many of these trends were what we expected, others were more surprising and warranted further discussion.
-
-\subsection{Alias Identification}
-As indicated by table \ref{table:1}, all of the alias analysis techniques identified above 90 percent of the pointers within the larger benchmarks, namely benchmarks that consisted of five or more source files. We attribute this to the larger number of virtual registers found within these benchmarks; larger programs have a higher number of memory access instructions with single virtual register operands that can be examined by alias analyses, and despite the increased program complexity, there is a lower proportion of irregular operands that are not identified. The smaller benchmarks we used had more variable identification rates, ranging from about 60 to 75 percent. We expected that none of the benchmarks would have 100 percent identification due to pointer values within the source programs that did not belong to virtual registers, such as nested getelementptr instructions. This is because the alias analyses techniques examined primarily focus on virtual registers, instead of irregular operands.
-
-\subsection{Alias Misses}
-Most of the benchmarks had relatively low alias miss rates, regardless of the alias analysis techniques. Over all of the instrumented benchmarks, low miss rates ranged from 0 to 7 percent. The number of alias misses was the same across all four analysis techniques for almost all of the benchmarks. Only three benchmarks showed differences in the number of alias misses - bzip2, mcf, and crafty, and for these benchmarks, the differences were still small, typically consisting of one alias miss between different alias analyses. Otherwise, all four alias analysis techniques tested were shown to be equally effective for most of the instrumented benchmarks.
-
-It's important to remember that the alias analyses are run on functions in LLVM source files, which consist of a one-dimensional array of blocks of statements. High-level control flow statements are translated to block separations, and SSA ensures that updates to existing values produce new virtual registers that may be examined in an alias analysis. Although aliases may still exist across blocks, the amount of ambiguity caused by program flow and stateful updates is reduced at this level of the program. This may explain why different analyses are often equally effective at this level, when they would have more pronounced differences in a more abstract programming language.
-
-\subsection{Alias Miss Rates}
-Some benchmarks had high alias miss rates. In this case, we considered high miss rates as over 20 percent on average across all alias analyses. These benchmarks include the sudoku, matmul, dict, and tree benchmarks. After examining the original source files for these benchmarks, we provide possible reasons for the unusually high miss rates.
-
-\subsubsection{Sudoku}
-The sudoku benchmark calculates the solution for nine example sudoku problems that are considered difficult for machines to solve by brute force. Across all alias analyses, this benchmark has an average miss rate of about 48 percent. The solving algorithm uses a binary matrix, declared as a two-dimensional array, representing a series of constraints that make up a valid sudoku puzzle, and iteratively tries different sets of constraints until a valid solution is found. As expected, the brute-force algorithm often requires significant backtracking, iteration, and conditional statements related to updating the binary matrix, resulting in numerous basic blocks within the associated LLVM files. Because none of the tested alias analysis techniques are flow-sensitive, they would not be expected to easily identify many of the resulting pointers for possible aliasing within the solution function.
-
-For this benchmark, the function \texttt{sd\_update} has the highest potential for alias misses; as the name suggests, this function updates the binary matrix used to represent the sudoku puzzle, and is frequently called throughout the benchmark. The C implementation of this function is shown below.
-
-\lstinputlisting[language=C, numbers=left] {figures/sd_update.c}
-
-The statement on line 6 updates the state vectors and the binary matrix by iterating through the rows and columns. Referencing the matrix itself requires indirection into a structure and a field reference, followed by multiple indexes into an array. Consequently, this is translated into multiple getelementptr and load instructions to access the appropriate entry in the matrix. Accessing the array in this manner is fairly common, and occurs several times at varying levels of nested loops. The statement translated into the LLVM IR is shown below.
-
-\lstinputlisting[firstline=758, lastline=776, numbers=left] {figures/sudoku_v1.ll}
-
-All of these memory accesses are contained within a loop, and cannot be analyzed well be flow-insensitive analyses. Specifically, the Steensgaard analysis cannot determine the aliases well because each statement is only processed once, which does not properly reflect the iteratve nature of this block; any aliases for the matrix entry to values outside of the loop or inside other loops would miss. Similarly, the Andersen analysis is able to gather constraints for statements within loops, but cannot reflect changes before and after due to iteration within the program. Ultimately, because this iterative access pattern occurs so frequently in this function, it contributes to higher miss rates.
-
-\subsubsection{Matrix Multiplication}
-The matmul benchmark multiplies two randomly-generated 100 by 100 matrices together, and has an average miss rate of about 32 percent. The matrices are dynamically allocated, providing a large number of potential pointers into the matrices to alias with. The classic multiplication algorithm utilizes three nested loops to calculate the resulting matrix. As with the sudoku benchmark, the prominent amount of iteration within this program introduced additional program flow that none of the given alias analyses could reliably address. Compared with the sudoku benchmark, the larger amount of memory used within this benchmark did not result in a higher percentage of alias misses; even though matrix multiplication still requires a large amount of memory for the input matrices, the loop body itself features fewer flow-sensitive statements, resulting in a lower overall miss rate. The C implementation of the matrix multiplication function is shown below.
-
-\lstinputlisting[language=C, numbers=left] {figures/matmul.c}
-
-Within the matrix multiplication function, there are two areas of interest: the transposing of the second matrix on lines 6 to 9, and the calculation of each entry on lines 13 to 16. The body of the inner loop on line 9, translated to LLVM IR, is shown below.
-
-\lstinputlisting[firstline=233, lastline=251, numbers=left] {figures/matmul_v1.ll}
-
-Each access into the matrix requires two getelementptr instructions, and two load instructions to index twice into the matrix. Additionally, the matrix pointer and the indices used are loaded each time, and are updated every after loop iteration. Combined with the single store instruction for updating the matrix, This block alone has twelve memory access instructions out of the nineteen total instructions, all of which cannot be analyzed well by flow-insensitive alias analyses, due to existing within a doubly-nested for loop. As with the sudoku benchmark, the typing rules for both the Steensgaard and Andersen analyses only process the statements in the loop body once, and thus, cannot properly reflect the changes caused by loop iteration. The loop body from lines 13 to 16 suffers from similar problems. The translated loop is shown below, and has a similar concentration of memory access instructions as the previous loop body.
-
-\lstinputlisting[firstline=301, lastline=346, numbers=left] {figures/matmul\_v1.ll}
-
-\subsubsection{Dictionary}
-The dict benchmark creates a hash table to store a series of input strings, and the resulting alias miss rate is about 77 percent. The significantly higher miss rate can be attributed to the logic related to updating and maintaining the hash table's entries. As with the Sudoku solving algorithm, the logic related to inserting variable-sized entries into the hash table rely upon several loops and conditional statements, primarily for traversing the hash table's array buckets and updating various attributes for the hash table. Unlike the Sudoku benchmark, accesses to the hash table are also more variable, and updates to the hash table that resize the hash table may occur, potentially invalidating previous aliases. Thus, hash tables are particularly difficult for the selected alias analysis techniques to effectively measure. Within the main program loop, each occurrence of a string is inserted into the hash table, as shown below, using the macros \texttt{kh\_put}, \texttt{kh\_val}, and \texttt{kh\_key} to access the hash table.
-
-\lstinputlisting[language=C, firstline=20, lastline=36, numbers=left] {figures/dict_v1.c}
-
-When lines 11 to 13 are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by variable accesses. The LLVM IR for lines 11 to 13 is shown below.
-
-\lstinputlisting[firstline=140, lastline=157, numbers=left] {figures/dict_v1.ll}
-
-The hash value is calculated by the function \texttt{kh\_put\_str}, which replaces the macro \texttt{kh\_put}. As expected, this function utilizes multiple loops and memory accesses into the input string to produce the hash value. As with the earlier benchmarks, the high concentration of memory accesses and the iteration make this function difficult to analyze effectively using flow-insensitive alias analyses. One of the blocks illustrating these problems is shown below.
-
-\lstinputlisting[firstline=301, lastline=329, numbers=left] {figures/dict_v1.ll}
-
-\subsubsection{Tree}
-The tree benchmark creates a search tree from a series of input strings that has branches based on common prefixes of one or more letters, and traverses this tree to retrieve specific strings requested by the user. This benchmark has a miss rate of about 53 percent, which is likely related to the iteration required to traverse the tree, along with the dynamic allocation of variable-sized amounts of dynamic memory for each tree's corresponding letters. Additionally, combining tree nodes based on common prefixes also affects possible pointer aliases, in a way that is similar to the previous dict benchmark.
-
-References to recursive data structures, like trees, are first loaded from the appropriate struct field offsets, and are treated as a separate pointer for subsequent loads and stores. When these fields are repeatedly updated, as in loops, this causes aliasing issues. An excerpt from the function for collapsing tree nodes, which involves such tree pointer traversal and reassignment, is shown below in both C, and the LLVM IR, illustrating these potential issues.
-
-\lstinputlisting[language=C, firstline=151, lastline=173, numbers=left] {figures/tree.c}
-
-\lstinputlisting[firstline=579, lastline=687, numbers=left] {figures/tree.ll}
-
-\subsection{Alias Lifetimes}
-The average alias lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the alias lifetimes was also high, reflecting varying access patterns. This suggests that a large number of aliases are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range aliases exist, while the averages are skewed toward longer-lived aliases.
-
-\subsection{Allocation Sizes}
-Heap allocation sizes were mostly consistent for all benchmarks. The standard deviation was zero for benchmarks that allocated uniform blocks of memory, such as matrices or nodes for a linked list. Benchmarks that handled strings, such as the tree and dict benchmarks, had more variable allocation sizes due to their varying lengths. As with the alias lifetimes, the high standard deviations also imply that the average allocation sizes for these benchmarks are skewed toward maintaining the data structure.
-
-\subsection{Allocation Lifetimes}
 Allocation lifetimes varied widely among the benchmarks that could be measured. As expected, the larger benchmarks had longer allocation lifetimes due to allocated memory being used over longer time periods. Unfortunately, the measurements lacked sufficient granularity, with the libc\_malloc and libc2\_malloc benchmarks having allocation lifetimes of zero. These benchmarks immediately free memory after using it, so they are not measured well with the current instrumentation.
