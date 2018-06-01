@@ -192,7 +192,8 @@ Each access into the matrix requires two getelementptr instructions, as on lines
 The dict benchmark creates a hash table to store a series of input strings, and the resulting alias miss rate is about 77 percent. The significantly higher miss rate can be attributed to the logic related to updating and maintaining the hash table's entries. As with the Sudoku solving algorithm, the logic related to inserting variable-sized entries into the hash table rely upon several loops and conditional statements, primarily for traversing the hash table's array buckets and updating various attributes for the hash table. Unlike the Sudoku benchmark, accesses to the hash table are also more variable, and updates to the hash table that resize the hash table may occur, potentially invalidating previous aliases. Thus, hash tables are particularly difficult for the selected alias analysis techniques to effectively measure. Within the main program loop, each occurrence of a string is inserted into the hash table, as shown below, using the macros \texttt{kh\_put}, \texttt{kh\_val}, and \texttt{kh\_key} to access the hash table.
 
 \begin{figure} [h]
-  \lstinputlisting[basicstyle=\ttfamily\small, language=C, firstline=20, lastline=36, numbers=left] {figures/dict_v1.c}
+  \lstinputlisting[basicstyle=\ttfamily\small, language=C, firstline=21, lastline=36, numbers=left] {figures/dict_v1.c}
+  \caption{Dictionary Insertion in C}
   \label{fig:dictc}
 \end{figure}
 
