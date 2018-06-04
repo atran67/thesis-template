@@ -2,14 +2,14 @@
 
 After instrumenting the benchmarks to keep track of memory accesses, we found some interesting trends related to the statistics we chose to measure. While many of these trends were what we expected, others were more surprising and warranted further discussion.
 
-\section{Alias Identification}
+\section{Pointer Identification}
 Table \ref{table:1} shows the number of pointer operands reported by alias analyses for each benchmark, the total number of pointers, and the identification rate found for each benchmark. For all the benchmarks, all four alias analyses identified the same number of aliases.
 
 \begin{table} [h!]
 \centering
    \begin{tabular} {|c|c c c c|}
       \hline
-	   & Identified Aliases & Total Pointers & Identification Rate \\
+	   & Identified Pointers & Total Pointers & Identification Rate \\
       \hline
 	   bzip2 & 624 & 630 & 0.990 \\
       \hline
@@ -42,11 +42,11 @@ Table \ref{table:1} shows the number of pointer operands reported by alias analy
 	   cycles & 27 & 31 & 0.871 \\
       \hline
    \end{tabular}
-   \caption{Aliases Identified and Total Pointers per Benchmark}
+   \caption{Pointers Identified, Total Pointers, and Identification Rate per Benchmark}
    \label{table:1}
 \end{table}
 
-As indicated by Table \ref{table:1}, all of the alias analysis techniques identified above 90 percent of the pointers within the larger benchmarks, namely benchmarks that consisted of five or more source files. We attribute this to the larger number of virtual registers found within these benchmarks; larger programs have a higher number of memory access instructions with single virtual register operands that can be examined by alias analyses, and despite the increased program complexity, there is a lower proportion of irregular operands that are not identified. The smaller benchmarks we used had more variable identification rates, ranging from about 60 to 75 percent. We expected that none of the benchmarks would have 100 percent identification due to pointer values within the source programs that did not belong to virtual registers, such as nested getelementptr instructions. This is because the alias analyses techniques examined primarily focus on virtual registers, instead of irregular operands.
+As indicated by Table \ref{table:1}, all of the alias analysis techniques identified above 90 percent of the pointer operands within the larger benchmarks, namely benchmarks that consisted of five or more source files. We attribute this to the larger number of virtual registers found within these benchmarks; larger programs have a higher number of memory access instructions with single virtual register operands that can be examined by alias analyses, and despite the increased program complexity, there is a lower proportion of irregular operands that are not identified. The smaller benchmarks we used had more variable identification rates, ranging from about 60 to 75 percent. We expected that none of the benchmarks would have 100 percent pointer identification, where every memory address is mapped to a pointer operand that is accounted for in an alias analysis, due to pointer values within the source programs that did not belong to virtual registers, such as nested getelementptr instructions. This is because the alias analyses techniques examined primarily focus on virtual registers, instead of irregular operands, so not all memory accesses would be covered by these analyses.
 
 \section{Alias Misses}
 Table \ref{table:2} shows the number of alias misses for each benchmark, separated by the type of alias analysis used.
