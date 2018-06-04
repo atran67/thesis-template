@@ -145,7 +145,7 @@ Some benchmarks had high alias miss rates. In this case, we considered high miss
 \subsection{Sudoku}
 The sudoku benchmark calculates the solution for nine example sudoku problems that are considered difficult for machines to solve by brute force. Across all alias analyses, this benchmark has an average miss rate of about 48 percent. The solving algorithm uses a binary matrix, declared as a two-dimensional array, representing a series of constraints that make up a valid sudoku puzzle, and iteratively tries different sets of constraints until a valid solution is found. As expected, the brute-force algorithm often requires significant backtracking, iteration, and conditional statements related to updating the binary matrix, resulting in numerous basic blocks within the associated LLVM files. Because none of the tested alias analysis techniques are flow-sensitive, they would not be expected to easily identify many of the resulting pointers for possible aliasing within the solution function.
 
-For this benchmark, the function \texttt{sd\_update} has the highest potential for alias misses; as the name suggests, this function updates the binary matrix used to represent the sudoku puzzle, and is frequently called throughout the benchmark. The C implementation of this function is shown below.
+For this benchmark, the function \texttt{sd\_update} has the highest potential for alias misses; as the name suggests, this function updates the binary matrix used to represent the sudoku puzzle, and is frequently called throughout the benchmark. The C implementation of this function is shown in Figure \ref{fig:sdc}.
 
 \begin{figure} [h]
   \lstinputlisting[basicstyle=\ttfamily\small, language=C, numbers=left] {figures/sd_update.c}
@@ -153,7 +153,7 @@ For this benchmark, the function \texttt{sd\_update} has the highest potential f
   \label{fig:sdc}
 \end{figure}
 
-The statement on line 6 of Figure \ref{fig:sdc} updates the state vectors and the binary matrix by iterating through the rows and columns. Referencing the matrix itself requires indirection into a structure and a field reference, followed by multiple indexes into an array. Consequently, this is translated into multiple getelementptr and load instructions to access the appropriate entry in the matrix. Accessing the array in this manner is fairly common, and occurs several times at varying levels of nested loops. The statement translated into the LLVM IR is shown below.
+The statement at the beginning line 6 of Figure \ref{fig:sdc} updates the state vectors and the binary matrix by iterating through the rows and columns. Referencing the matrix itself requires indirection into a structure and a field reference, followed by multiple indexes into an array. Consequently, this is translated into multiple getelementptr and load instructions to access the appropriate entry in the matrix. Accessing the array in this manner is fairly common, and occurs several times at varying levels of nested loops. The statement translated into the LLVM IR is shown in Figure \ref{fig:sdll}.
 
 \begin{figure} [h]
   \lstinputlisting[basicstyle=\ttfamily\small, firstline=758, lastline=776, numbers=left] {figures/sudoku_v1.ll}
