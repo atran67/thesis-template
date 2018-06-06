@@ -197,7 +197,7 @@ The dict benchmark creates a hash table to store a series of input strings, and 
   \label{fig:dictc}
 \end{figure}
 
-When lines 10 to 12 in Figure \ref{fig:dictc} are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by unpredictable accesses. The LLVM IR for lines 10 to 12 is shown in Figure \ref{dig:dictll}.
+When lines 10 to 12 in Figure \ref{fig:dictc} are translated to LLVM, \texttt{kh\_key} and \texttt{kh\_val} are treated as array accesses. The arrays of keys and values are fields in the hash table struct, so their offsets are fixed when accessing them from the struct via getelementptr and load instructions. However, the array indices are based on the hash value of the string, which results in aliasing issues caused by unpredictable accesses. The LLVM IR for lines 10 to 12 is shown in Figure \ref{fig:dictll}.
 
 \begin{figure} [h!]
   \lstinputlisting[basicstyle=\ttfamily\tiny, firstline=140, lastline=157, numbers=left] {figures/dict_v1.ll}
