@@ -241,40 +241,40 @@ Table \ref{table:4} shows the mean and standard deviations of the pointer lifeti
       \hline
 	   & Mean & Std. Deviation & 25th PCTL & 50th PCTL & 75th PCTL & 100th PCTL \\
       \hline
-	   bzip2 & 315009.684 & 928623.009 & 1 & 1 & 69390 & 5537346 \\
+	   bzip2 & 315009.684 & 1 & 1 & 69390 & 5537346 \\
       \hline
-	   gzip & 258578.033 & 777312.996 & 1 & 2.5 & 1634.25 & 5714959 \\
+	   gzip & 258578.033 & 1 & 2.5 & 1634.25 & 5714959 \\
       \hline
-	   mcf & 195359.596 & 1111273.598 & 1 & 1 & 5209 & 11706529 \\
+	   mcf & 195359.596 & 1 & 1 & 5209 & 11706529 \\
       \hline
-	   twolf & 70494.051 & 151691.063 & 1 & 1 & 2.75 & 684118 \\
+	   twolf & 70494.051 & 1 & 1 & 2.75 & 684118 \\
       \hline
-	   parser & 3535.069 & 14744.134 & 1 & 1 & 5 & 92426 \\
+	   parser & 3535.069 & 1 & 1 & 5 & 92426 \\
       \hline
-	   vpr & 4321.077 & 222156.521 & 1 & 1 & 5 & 258496 \\
+	   vpr & 4321.077 & 1 & 1 & 5 & 258496 \\
       \hline
-	   crafty & 282708.395 & 853139.216 & 2 & 6 & 150.5 & 4852228 \\
+	   crafty & 282708.395 & 2 & 6 & 150.5 & 4852228 \\
       \hline
-	   sudoku & 228052.284 & 549056.265 & 1 & 8.5 & 119223 & 3012733 \\
+	   sudoku & 228052.284 & 1 & 8.5 & 119223 & 3012733 \\
       \hline
-	   matmul & 176101.094 & 748244.153 & 1 & 100 & 10000 & 5020000 \\
+	   matmul & 176101.094 & 1 & 100 & 10000 & 5020000 \\
       \hline
-	   dict & 63435.690 & 178112.301 & 2 & 16 & 78087 & 1741124 \\
+	   dict & 63435.690 & 2 & 16 & 78087 & 1741124 \\
       \hline
-	   libc\_malloc & 76924.026 & 349696.758 & 1 & 1 & 1 & 2000000 \\
+	   libc\_malloc & 76924.026 & 1 & 1 & 1 & 2000000 \\
       \hline
-	   libc\_malloc2 & 48781.439 & 215408.586 & 1 & 1 & 1 & 1000000 \\
+	   libc\_malloc2 & 48781.439 & 1 & 1 & 1 & 1000000 \\
       \hline
-	   tcmalloc & 86958.217 & 407861.878 & 1 & 2 & 3 & 2000000 \\
+	   tcmalloc & 86958.217 & 1 & 2 & 3 & 2000000 \\
       \hline
-	   tree & 25.717 & 156.047 & 1 & 1 & 7.5 & 1696 \\
+	   tree & 25.717 & 1 & 1 & 7.5 & 1696 \\
       \hline
-	   cycles & 1363.871 & 3351.797 & 1 & 2 & 109.5 & 14712 \\
+	   cycles & 1363.871 & 1 & 2 & 109.5 & 14712 \\
       \hline
    \end{tabular}
-   \caption{Pointer Lifetime Statistics (# of Instrumented Instructions)}
+   \caption{Average Pointer Lifetime and Percentiles (# of Instrumented Instructions)}
    \label{table:4}
 \end{table}
 
-The average pointer lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the standard deviation of the pointer lifetimes was also high, reflecting varying access patterns. This suggests that a large number of pointers are being used within a short timespan, likely within loops. The standard deviations are much higher than their respective averages, implying that a large number of these short range pointers exist, while the averages are skewed toward longer-lived pointers.
+The average pointer lifetimes were significantly higher for the larger benchmarks. We suspect that this is due to variables remaining throughout the span of the program, such as input data to be processed, or structs maintaining program state. At the same time, the percentiles of the pointer lifetimes appear to increase quickly as the percentiles increase, reflecting varying access patterns. This suggests that a large number of pointers are being used within a short timespan, likely within loops. The higher percentiles are also much higher than the lower percentiles, implying that a large number of these short range pointers exist, while the averages are skewed toward longer-lived pointers.
 
