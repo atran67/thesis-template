@@ -237,39 +237,39 @@ Table \ref{table:4} shows the mean and standard deviations of the pointer lifeti
 
 \begin{table} [h!]
 \centering
-   \begin{tabular} {|c|c c|}
+   \begin{tabular} {|c|c c c c c c|}
       \hline
-      & Mean & Std. Deviation \\
+	   & Mean & Std. Deviation & 25th percentile & 50th percentile & 75th percentile & 100th percentile \\
       \hline
-	   bzip2 & 286487.505 & 843167.976 \\
+	   bzip2 & 315009.684 & 928623.009 & 1 & 1 & 69390 & 5537346 \\
       \hline
-	   gzip & 252200.178 & 758121.815 \\
+	   gzip & 258578.033 & 777312.996 & 1 & 2.5 & 1634.25 & 5714959 \\
       \hline
-           mcf & 175741.741 & 1002112.782 \\
+	   mcf & 195359.596 & 1111273.598 & 1 & 1 & 5209 & 11706529 \\
       \hline
-	   twolf & 68782.141 & 149007.719 \\
+	   twolf & 70494.051 & 151691.063 & 1 & 1 & 2.75 & 684118 \\
       \hline
-	   parser & 3054.5 & 12379.139 \\
+	   parser & 3535.069 & 14744.134 & 1 & 1 & 5 & 92426 \\
       \hline
-	   vpr & 4762.618 & 24508.441 \\
+	   vpr & 4321.077 & 222156.521 & 1 & 1 & 5 & 258496 \\
       \hline
-	   crafty & 276957.791 & 835831.453 \\
+	   crafty & 282708.395 & 853139.216 & 2 & 6 & 150.5 & 4852228 \\
       \hline
-	   sudoku & 184128.259 & 443716.239 \\
+	   sudoku & 228052.284 & 549056.265 & 1 & 8.5 & 119223 & 3012733 \\
       \hline
-	   matmul & 176101.094 & 748244.153 \\
+	   matmul & 176101.094 & 748244.153 & 1 & 100 & 10000 & 5020000 \\
       \hline
-	   dict & 61732.615 & 172287.097 \\
+	   dict & 63435.690 & 178112.301 & 2 & 16 & 78087 & 1741124 \\
       \hline
-	   libc\_malloc & 311113.089 & 1330367.143 \\
+	   libc\_malloc & 76924.026 & 349696.758 & 1 & 1 & 1 & 2000000 \\
       \hline
-	   libc\_malloc2 & 279071.698 & 1263542.275 \\
+	   libc\_malloc2 & 48781.439 & 215408.586 & 1 & 1 & 1 & 1000000 \\
       \hline
-	   tcmalloc & 313728.255 & 1407127.345 \\
+	   tcmalloc & 86958.217 & 407861.878 & 1 & 2 & 3 & 2000000 \\
       \hline
-	   tree & 25.717 & 156.047 \\
+	   tree & 25.717 & 156.047 & 1 & 1 & 7.5 & 1696 \\
       \hline
-	   cycles & 1363.871 & 3351.797 \\
+	   cycles & 1363.871 & 3351.797 & 1 & 2 & 109.5 & 14712 \\
       \hline
    \end{tabular}
    \caption{Mean and Standard Deviation of Benchmark Pointer Lifetimes (# of Instrumented Instructions)}
